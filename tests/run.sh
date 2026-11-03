@@ -20,6 +20,7 @@ export ADB="$HERE/fake_adb.py"
 export FAKE_TV_STATE="$WORK/state.json" FAKE_TV_LOG="$WORK/adb.log" FAKE_TV_UNKNOWN="$WORK/unknown.log"
 export BFTV_DUMBTV="$WORK/dumbtv" BFTV_BACKUPS="$WORK/backups" BFTV_LOGS="$WORK/logs"
 export BFTV_DOWNLOADS="$WORK/downloads" BFTV_WALLDIR="$WORK/hintergruende" BFTV_CONFIG="$REPO/einstellungen.txt"
+export BFTV_BILDER="$WORK/bilder"
 export BFTV_REBOOT_WAIT=0 BFTV_SETTLE=0 BOOT_SECONDS=0 PM_WRITE_SECONDS=0 STUB_APKS="$WORK/apks"
 T="$REPO/tool/betterfiretv.sh"
 fail=0
@@ -36,6 +37,7 @@ for v in fos8 fos5; do
   if [[ $v == fos8 ]]; then
     printf '2 1\n0\n' | bash "$T" startbildschirm > "$WORK/dock.txt" 2>&1 || { echo "Dock fehlgeschlagen"; fail=1; }
     printf 'n\n' | bash "$T" hintergrund --neu urlaub.jpg > "$WORK/bild.txt" 2>&1 || { echo "Hintergrund fehlgeschlagen"; fail=1; }
+    bash "$T" screenshot < /dev/null > "$WORK/shot.txt" 2>&1 && [[ -s $WORK/bilder/startbildschirm.png ]] || { echo "Screenshot fehlgeschlagen"; fail=1; }
   else
     # Fire OS 5: kein eigener Startbildschirm, die Modi müssen sauber ablehnen
     printf '\n' | bash "$T" startbildschirm > "$WORK/dock.txt" 2>&1 && { echo "Dock hätte ablehnen müssen"; fail=1; }

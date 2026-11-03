@@ -10,6 +10,7 @@
 #   tool/betterfiretv.sh status       [--ip ADRESSE]
 #   tool/betterfiretv.sh startbildschirm [--ip ADRESSE]          Dock und ausgeblendete Apps
 #   tool/betterfiretv.sh hintergrund  [--ip ADRESSE] [--neu "a.jpg b.jpg"]
+#   tool/betterfiretv.sh screenshot   [--ip ADRESSE]          Bild vom Startbildschirm fürs README
 #
 # Die eigentliche Arbeit (Debloat, Sperren, DNS-Filter, SmartTube, Restore) machen die
 # getesteten Skripte von dumbtv (vendor/dumbtv, MIT). Dieses Skript ergänzt:
@@ -1401,6 +1402,36 @@ mode_status() {
   fi
 }
 
+# Ein sauberes Bild vom Startbildschirm fürs README: kurz mit NASA-Hintergrund, dann zurück.
+mode_screenshot() {
+  load_config
+  connect_tv
+  ensure_home
+  load_home_conf
+  local dir=${BFTV_BILDER:-$ROOT/docs/bilder} out sig
+  mkdir -p "$dir"
+  out="$dir/startbildschirm.png"
+  titel "Bild vom Startbildschirm"
+  info "Für das Bild wird kurz ein NASA-Hintergrund gezeigt, danach kommt deiner zurück."
+  home_send "--ez builtins true --es wallpaper aurora"
+  dev "input keyevent KEYCODE_HOME" >/dev/null
+  sleep 6
+  adbs exec-out screencap -p > "$out.tmp" 2>/dev/null
+  # Hintergrund wiederherstellen
+  local args=""
+  if [[ $H_BUILTINS == 0 ]]; then args+=" --ez builtins false"; fi
+  [[ -n $H_WALLPAPER ]] && args+=" --es wallpaper $(shq "$H_WALLPAPER")"
+  [[ -n $args ]] && home_send "$args"
+  sig=$(head -c 4 "$out.tmp" 2>/dev/null | od -An -tx1 | tr -d ' \n')
+  if [[ $sig != 89504e47 ]]; then
+    rm -f "$out.tmp"
+    fehler "Kein Bild bekommen. Ist der Stick an und zeigt den Startbildschirm?"
+  fi
+  mv -f "$out.tmp" "$out"
+  ok "Gespeichert: docs/bilder/startbildschirm.png"
+  info "Fürs Repo: git add docs/bilder/startbildschirm.png, committen, pushen."
+}
+
 # --- Start ----------------------------------------------------------------------------------
 # Aufgerufen von tool/betterfiretv.sh, nachdem diese Datei komplett eingelesen ist.
 bftv_main() {
@@ -1418,8 +1449,8 @@ bftv_main() {
     esac
   done
 
-  case $MODE in einrichten|rueckgaengig|backup|status|startbildschirm|hintergrund) ;; *)
-    sed -n '6,12p' "$CORE_FILE" | sed 's/^# \{0,1\}//'; exit 2 ;; esac
+  case $MODE in einrichten|rueckgaengig|backup|status|startbildschirm|hintergrund|screenshot) ;; *)
+    sed -n '6,13p' "$CORE_FILE" | sed 's/^# \{0,1\}//'; exit 2 ;; esac
 
   for t in "$ADB" curl awk sed tr comm; do
     command -v "$t" >/dev/null || fehler "$t nicht gefunden."

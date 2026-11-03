@@ -1,12 +1,12 @@
 ﻿# BetterFireTV – Windows-Start.
 # Besorgt adb (Android platform-tools) und Git Bash, sucht den Fire TV im Heimnetz und
 # startet dann tool/betterfiretv.sh, das die eigentliche Arbeit macht.
-# Wird von Einrichten.cmd, Rueckgaengig.cmd, Backup.cmd, Status.cmd, Startbildschirm.cmd und
-# Hintergrund.cmd aufgerufen.
+# Wird von Einrichten.cmd, Rueckgaengig.cmd, Backup.cmd, Status.cmd, Startbildschirm.cmd,
+# Hintergrund.cmd und Screenshot.cmd aufgerufen.
 # Läuft mit Windows PowerShell 5.1 (in Windows 10/11 enthalten).
 param(
     [string]$Root = '',
-    [ValidateSet('einrichten', 'rueckgaengig', 'backup', 'status', 'startbildschirm', 'hintergrund')]
+    [ValidateSet('einrichten', 'rueckgaengig', 'backup', 'status', 'startbildschirm', 'hintergrund', 'screenshot')]
     [string]$Modus = 'einrichten',
     [string]$Ip = '',
     [switch]$Trockenlauf

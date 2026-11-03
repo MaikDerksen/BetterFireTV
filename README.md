@@ -8,15 +8,17 @@ Doppelklick: Das Tool findet den Stick selbst im WLAN.
 > Kein Projekt von Amazon und nicht mit Amazon verbunden. „Fire TV“ ist eine Marke von
 > Amazon.com, Inc. oder ihren Tochtergesellschaften.
 
-| Nach dem Einrichten | Der DNS-Filter bei der Arbeit |
-|---|---|
-| ![Fire TV Stick 3. Generation nach dem Einrichten: Uhr, App-Reihe mit farbigen Kacheln, keine Werbung](docs/bilder/nachher-fire-tv-stick-3.jpg) | ![personalDNSfilter auf dem Fernseher: grüne Einträge erlaubt, rote Amazon-Tracker blockiert](docs/bilder/dns-filter.jpg) |
-| *Fire TV Stick 3. Gen: keine Werbung, nur die eigenen Apps (hier mit dumbtv home)* | *Rot = blockiert: Amazons Telemetrie (`unagi`, `arcus`, `sonar`)* |
+![Der BetterFireTV-Startbildschirm: Uhr, eigenes Hintergrundbild und ein Glas-Dock mit farbigen App-Kacheln](docs/bilder/startbildschirm.png)
 
-| Der Glas-Dock-Look | Einrichten am PC |
-|---|---|
-| ![Startbildschirm mit Foto, Uhr und Glas-Dock](docs/bilder/look-glas-dock.jpg) | ![Konsolenausgabe von Einrichten.cmd](docs/bilder/konsole.png) |
-| *Das Layout von FireFrame, auf dem der BetterFireTV-Startbildschirm aufbaut. Bei BetterFireTV sind die App-Kacheln farbig (Originalbild aus dem FireFrame-Projekt).* | *Einrichten.cmd auf einem echten Stick: Backup, Abschalten, DNS-Filter, SmartTube, Startbildschirm, Kontrolle* |
+*Der Startbildschirm: farbige App-Kacheln im Glas-Dock über deinem eigenen Hintergrundbild. Ein
+aktuelles Bild davon macht `Screenshot.cmd`.*
+
+<details>
+<summary>So sieht das Einrichten am PC aus</summary>
+
+![Konsolenausgabe von Einrichten.cmd: Backup, Abschalten, DNS-Filter, SmartTube, Startbildschirm, Kontrolle](docs/bilder/konsole.png)
+
+</details>
 
 ## Was passiert
 
@@ -103,6 +105,7 @@ Amazon und in den Apps neu anmelden.
 | `Hintergrund.cmd` | bringt eigene Fotos als Hintergrund auf den Stick |
 | `Status.cmd` | zeigt Startbildschirm, Dock, DNS-Filter, abgeschaltete Pakete und freien Arbeitsspeicher |
 | `Backup.cmd` | macht nur ein Backup, ohne etwas zu ändern |
+| `Screenshot.cmd` | macht ein sauberes Bild vom Startbildschirm für dieses README (`docs/bilder/startbildschirm.png`), kurz mit NASA-Hintergrund |
 
 Dock, ausgeblendete Apps und Hintergründe werden pro Gerät in
 `backups/<Gerät>/startbildschirm.conf` gespeichert. Nach einer Neuinstallation werden
@@ -131,7 +134,7 @@ sie automatisch wieder angewendet.
 | `tool/betterfiretv-core.sh` | Ablauf: Gerätesuche, Backup, dumbtv-Schritte, Startbildschirm, Dock, Hintergründe, Abgleich beim Rückgängigmachen |
 | `home/` | Startbildschirm: Java-Quelltext, `build.sh` (ohne Gradle), fertige `betterfiretv-home.apk`. Der Signierschlüssel `home/signing/` liegt nicht im Repo |
 | `vendor/dumbtv` | [dumbtv](https://github.com/humblemuzzu/dumbtv), unverändert (Stand in `VENDORED_COMMIT.txt`) |
-| `tests/run.sh` | Ende-zu-Ende-Test gegen einen simulierten Fire TV (Fire OS 8 und Fire OS 5): Einrichten, Dock, Hintergrund, Rückgängig. Danach muss der Stick exakt wieder im Ausgangszustand sein |
+| `tests/run.sh` | Ende-zu-Ende-Test gegen einen simulierten Fire TV (Fire OS 8 und Fire OS 5): Einrichten, Dock, Hintergrund, Screenshot, Rückgängig. Danach muss der Stick exakt wieder im Ausgangszustand sein |
 
 ```sh
 bash tests/run.sh          # braucht bash und python3 (Linux, WSL oder Git Bash)
@@ -152,7 +155,7 @@ bash home/build.sh         # baut die APK, siehe home/README.md
 ## Ordner
 
 ```
-Einrichten.cmd  Rueckgaengig.cmd  Startbildschirm.cmd  Hintergrund.cmd  Status.cmd  Backup.cmd
+Einrichten.cmd  Rueckgaengig.cmd  Startbildschirm.cmd  Hintergrund.cmd  Status.cmd  Backup.cmd  Screenshot.cmd
 einstellungen.txt     deine Auswahl
 tool/                 start.ps1 (Windows), betterfiretv.sh + betterfiretv-core.sh (Ablauf)
 home/                 Startbildschirm: Quelltext, build.sh, fertige APK
