@@ -1,0 +1,91 @@
+id: androidtv-oneplus-y-series
+title: "OnePlus TV Y Series (Skyworth, Android TV 11)"
+contributors:
+  - priyank-saarthios-ai
+platform: androidtv
+# Full pass done by hand over ADB; verify.sh only checks Fire OS things.
+status: partial
+tested_on: "RTO9.231122.002 (Android 11, sdk 30)"
+models:
+  - "Y Series (shibuya)"
+adb:
+  port: 5555
+  transport: wifi
+  first_connection_prompt: >-
+    Allow USB debugging? appears on the TV at the first adb connect; tick
+    Always allow from this computer and press Allow.
+developer_mode: >-
+  Settings > Device Preferences > About > Build, press OK five times (not
+  seven) until the TV says you are a developer. Developer options is hidden
+  until then. Then Device Preferences > Developer options > USB debugging: ON;
+  that alone opened adb on port 5555 over Wi-Fi.
+ip_location: >-
+  Settings > Network & Internet > the connected network > IP address.
+prompts:
+  - name: "Allow USB debugging?"
+    when: "the first adb connect from a computer"
+    blocks_automation: true
+    fix: "tick Always allow from this computer, press Allow on the remote"
+  - name: "Google Play Protect: app built for an older version of Android"
+    when: "adb install of the dumbtv home APK"
+    blocks_automation: true
+    fix: >-
+      adb install waits until someone answers the dialog on the TV. Press
+      Install anyway. The warning comes from dumbtv home's targetSdk 28,
+      which is deliberate; the app runs normally on Android 11.
+data:
+  packages: data/androidtv/packages.txt
+  protected: data/androidtv/protected.txt
+  never_disable: data/androidtv/never-disable.txt
+  user_apps: data/androidtv/user-apps.txt
+launcher:
+  mechanism: set_home_activity
+  package: tv.dumbtv.home
+  reason: >-
+    Classic Android TV home (com.google.android.tvlauncher, HOME at
+    priority 2). dumbtv home answers HOME once the stock launcher is disabled.
+  fallback: "pm enable --user 0 com.google.android.tvlauncher"
+  quirk: >-
+    launcher/install.sh was not used: its Guard is for Fire OS. The release
+    APK was checksum-checked against launcher/version.env, installed with adb
+    install, then com.google.android.tvlauncher was disabled with
+    pm disable-user (it is in never-disable.txt; a deliberate,
+    owner-approved exception). Only tvlauncher and Settings answer HOME on
+    this build, so setupwraith did not need touching. HOME stayed on dumbtv
+    home after a reboot.
+quirks:
+  - >-
+    pm disable-user printed disabled-user, but every package came back
+    enabled after an adb reboot sent a few seconds later. With about 40 s
+    between the last disable and the reboot they persisted. The TV has
+    about 900 MB of RAM and saves package state lazily; wait before
+    rebooting.
+  - >-
+    Made by Skyworth: ro.product.manufacturer is skyworth, ro.product.brand
+    is OnePlus. Vendor packages are com.smartdevice.* (store demo, e-manual)
+    and MediaTek's com.mediatek.wwtv.* (com.mediatek.wwtv.tvcenter is the
+    HDMI and tuner screen).
+  - >-
+    Private DNS set to an ad-blocking DoT resolver validated and blocked
+    doubleclick.net. Settings has no Private DNS menu on this build, so it
+    can only be changed or switched off again over adb.
+  - >-
+    Found on the network over mDNS: _googlecast._tcp advertises md=Y Series.
+notes: >-
+  Manual ADB session on 2026-10-25 (repo scripts not run for the changes).
+  10 packages disabled with pm disable-user: Google feedback, partnersetup,
+  tvrecommendations, the leanback partner customizer, Skyworth's store demo
+  and e-manual, the backdrop screensaver, katniss and tvlauncher. Free
+  memory went from about 210 MB to about 360 MB. See the commented block in
+  data/androidtv/packages.txt.
+known_limits:
+  - "Observed on one unit and one build; other OnePlus TV models and firmware may differ."
+  - >-
+    all.sh and verify.sh were not run end to end: verify.sh checks Fire OS
+    things, so its pass/fail says nothing about this TV.
+  - >-
+    katniss was disabled, so the remote's voice button and voice search no
+    longer work.
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

@@ -1,0 +1,58 @@
+# Extra hosts on top of the HaGeZi Amazon tracker list, imported by the DNS
+# filter as a local file. Plain domains, one per line.
+#
+# Deliberately NOT here, because the TV needs them:
+#   atv-ext.amazon.com / ktpx.amazon.com / a4k.amazon.com   launcher content
+#   m.media-amazon.com / ecx.images-amazon.com              app tile artwork
+#   appstore-tv-prod-na.amazon.com / mas-ext / mas-sdk      app store
+#   *.googlevideo.com / youtube.com / ytimg.com             YouTube
+#
+# Prime Video: with PRIME=1 (the default) dnsfilter.sh leaves aiv-delivery.net,
+# aiv-cdn.net and device-messaging-na.amazon.com out of the filter.
+# Alexa's voice servers are in alexa-hosts.txt and are blocked only with ALEXA=0.
+
+# OTA: nothing can check for or download an update
+softwareupdates.amazon.com
+dubri19p4y5b.cloudfront.net
+distro-download.amazon.com
+amzdigital-a.akamaihd.net
+amzdigitaldownloads.edgesuite.net
+
+# Amazon Device Messaging, a push channel. Prime Video does not start without it
+# (closed PR #54), so it is blocked only with PRIME=0.
+device-messaging-na.amazon.com
+
+# device telemetry and registration
+arcus-uswest.amazon.com
+arcus.amazon.com
+device-metrics-us.amazon.com
+device-metrics-us-2.amazon.com
+device-metrics-us-ud.amazon.com
+det-ta-g7g.amazon.com
+det-ta-g7g.integ.amazon.com
+unagi-zaz.amazon.com
+unagi-na.amazon.com
+metrics.media-amazon.com
+
+# analytics pipeline (names seen in the TV's own ceviche config)
+aan.amazon.com
+fls-na.amazon.com
+todo-ta-g7g.amazon.com
+pindorama.amazon.com
+latinum.amazon.com
+dcape-na.amazon.com
+# whole families: the filter blocks every subdomain of a listed domain (no * needed)
+ceviche.amazon.com
+minerva.amazon.com
+
+# Amazon advertising: home promo rows, Appstore sponsored tiles, ad attribution.
+# Video CDNs (aiv-delivery/aiv-cdn) stay out when PRIME=1; artwork hosts are
+# listed as needed at the top of this file.
+aax.amazon-adsystem.com
+aax-us.amazon-adsystem.com
+aax-us-east.amazon-adsystem.com
+aax-us-west.amazon-adsystem.com
+aax-eu.amazon-adsystem.com
+aax-fe.amazon-adsystem.com
+amazon-adsystem.com
+mads.amazon.com

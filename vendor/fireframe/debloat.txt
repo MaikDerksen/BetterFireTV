@@ -1,0 +1,89 @@
+# What ./fireframe.sh debloat turns off, by group. Lines are: group  package  # what it is
+# "safe" is always used. Add others with --also alexa,primevideo,... or --all.
+# Apps are disabled, never deleted: ./fireframe.sh undo turns them back on.
+# Checked on a Fire TV Stick HD (AFTSS), Fire OS 7.7.1.4. Missing packages are skipped.
+#
+# Never listed, because Fire TV needs them: the Amazon launcher (Fire OS won't allow it anyway),
+# Settings, System UI, the keyboard, Bluetooth and the remote, the Appstore (apps check their
+# licence through it), sign-in and account services, WebView, DIAL (casting from Netflix and
+# YouTube phone apps), parental controls, setup, and screen savers.
+
+# Ads, tracking and promotions
+safe       com.amazon.kso.blackbird                 # ads service (Kindle Special Offers)
+safe       com.amazon.ftvads.deeplinking            # opens ads when clicked
+safe       com.amazon.tv.acr                        # automatic content recognition: tracks what's on screen
+safe       com.amazon.media.recommendations         # recommendation rows for Amazon's home screen
+safe       com.amazon.sneakpeek                     # autoplaying previews on Amazon's home screen
+safe       com.amazon.shoptv.client                 # Amazon shopping on TV
+safe       com.amazon.shoptv.firetv.client          # Amazon shopping on TV
+safe       com.amazon.tigris                        # Subscription Central upsells
+safe       com.amazon.tv.easyupgrade                # "upgrade your device" promos
+safe       com.amazon.hedwig                        # News
+safe       com.amazon.minitv.android.app            # Amazon miniTV
+
+# Telemetry and logging sent to Amazon
+safe       com.amazon.device.crashmanager           # crash reports
+safe       com.amazon.dp.logger                     # device logging
+safe       com.amazon.logan                         # log upload
+safe       com.amazon.device.logmanager             # log manager
+safe       com.amazon.client.metrics                # usage metrics
+safe       com.amazon.tv.fw.metrics                 # framework metrics
+safe       com.amazon.wirelessmetrics.service       # Wi-Fi metrics
+safe       com.amazon.perfc                         # performance data collection
+safe       com.amazon.perfcollection                # performance data collection
+safe       com.amazon.wifilocker                    # saves your Wi-Fi passwords to Amazon
+
+# Extras nobody asked for
+safe       com.amazon.d3                            # store demo mode daemon
+safe       com.amazon.gamehub                       # game hub
+safe       com.amazon.spiderpork                    # Amazon Luna cloud gaming
+safe       com.amazon.tahoe                         # Amazon Kids
+safe       com.amazon.tmm.tutorial                  # tutorials
+safe       com.amazon.storm.lightning.tutorial      # tutorials
+safe       com.amazon.tv.releasenotes               # release notes
+safe       com.amazon.tv.csapp                      # help videos
+safe       com.amazon.ods.kindleconnect             # Mayday support screen sharing
+safe       com.amazon.spotify.mediabrowserservice   # Alexa's Spotify bridge (the Spotify app still works)
+
+# Third-party screensaver apps that ship the Bright Data proxy SDK
+safe       com.amazon.brightdata.coralreef          # "FREE relaxing coral reef screensaver"
+safe       com.amazon.brightdata.jellyfish          # jellyfish screensaver, same SDK
+
+# Alexa: voice search on the remote's mic button stops working
+alexa      com.amazon.vizzini                       # Alexa on Fire TV
+alexa      com.amazon.alexa.externalmediaplayer.fireos  # Alexa media control
+alexa      com.amazon.alexamediaplayer.runtime.ftv  # Alexa media player
+alexa      com.amazon.alexadirectivebrokerservice   # Alexa commands
+alexa      com.amazon.alexa.datastore.app           # Alexa data
+alexa      com.amazon.aca                           # Alexa hints for apps
+alexa      com.amazon.vizzini.ftvcds                # "What Should I Watch"
+alexa      com.amazon.cardinal                      # Alexa Video Player
+alexa      com.amazon.tv.alexaalerts                # Alexa alerts
+alexa      com.amazon.tv.alexanotifications         # Alexa notifications
+alexa      com.amazon.comms.starktachyon            # Alexa calling
+alexa      com.amazon.rtcsessioncontroller          # Alexa video calls
+alexa      com.amazon.audiohome                     # Alexa multi-room audio
+alexa      com.amazon.whad                          # Whole Home Audio
+alexa      com.amazon.whasettings                   # Whole Home Audio settings
+alexa      com.amazon.wha.mediabrowserservice       # Whole Home Audio
+
+# Prime Video: the biggest app in memory, even when you don't watch it
+primevideo com.amazon.firebat                       # Prime Video
+
+# Amazon's own apps
+amazonapps com.amazon.bueller.music                 # Amazon Music
+amazonapps com.amazon.bueller.photos                # Amazon Photos
+amazonapps com.amazon.cloud9                        # Silk Browser
+
+# Fire TV's own screen mirroring and "fling" (Netflix and YouTube casting keep working)
+casting    com.amazon.cast.sink                     # Display Mirroring
+casting    com.amazon.awvflingreceiver              # Amazon's built-in cast receiver
+
+# Amazon's Live TV guide. It wakes channel apps (Tubi, Fubo, Netflix...) in the background to fill
+# a Live tab that FireFrame doesn't have. The apps themselves keep working.
+livetv     com.amazon.tv.livetv                     # Live TV guide
+
+# Automatic system updates. Fewer surprises, but no security fixes either.
+updates    com.amazon.device.software.ota           # system updates
+updates    com.amazon.device.software.ota.override  # system updates
+updates    com.amazon.tv.forcedotaupdater.v2        # forced updates

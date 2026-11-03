@@ -1,0 +1,23 @@
+# Where the DNS lists come from
+#
+# Fetched by the script on your computer (not by the TV), then pushed to it:
+#   https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/wildcard/native.amazon-onlydomains.txt
+#   HaGeZi DNS blocklists — Amazon native trackers. Blocks Amazon device
+#   telemetry. If the user keeps Prime Video, scripts/dnsfilter.sh removes the
+#   aiv-delivery / aiv-cdn lines before pushing, so playback still works.
+#
+# Bundled here (MIT, hand-written from APK strings):
+#   extra-hosts.txt     OTA, arcus, unagi-zaz, Alexa voice, analytics
+#   verify-blocked.txt  hosts verify.sh asserts are blocked
+#   verify-allowed.txt  hosts verify.sh asserts still resolve
+#
+# How the bundled list was built: pull system APKs off the device
+#   adb shell pm path <package>      -> adb pull that path
+#   unzip -o app.apk -d app/ ; grep -rhoaE 'https?://[A-Za-z0-9._-]+' app/ | sort -u
+# The interesting packages: the launcher, device.metrics, vizzini, tahoe,
+# devicecontrol, crashmanager, tved. Do the same on a new model to find its extra
+# hosts.
+#
+# Alternative if you would rather filter the whole network: import this file into
+# NextDNS, AdGuard Home or Pi-hole and point the router's DNS at it. Same lists,
+# no app on the TV.

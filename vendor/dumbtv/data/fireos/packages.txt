@@ -1,0 +1,60 @@
+# Amazon packages debloat.sh disables on Fire OS 7 and 8. Disabled, never
+# uninstalled: restore.sh or Settings > Applications turns any of them back on.
+#
+# Only things that serve ads, track what you watch, report telemetry, run
+# experiments, nag about updates, or are dead demo stubs. Anything a person might
+# use (apps, the screensaver, printing, TV-provider sign-in) is in user-apps.txt and
+# is only removed when asked for. Alexa is in alexa.txt and is kept unless asked.
+#
+# Protection varies per build: anything that answers "Cannot disable a protected
+# package" belongs in protected.txt instead.
+
+# --- ads, promos and shopping ---
+com.amazon.hybridadidservice           # advertising ID
+com.amazon.privacypassservice          # ad-token service
+com.amazon.shoptv.client               # shopping on the TV
+com.amazon.shoptv.firetv.client        # "Amazon Live Shopping" tile
+com.amazon.sneakpeek                   # autoplaying promos
+com.amazon.media.recommendations       # sponsored rows
+com.amazon.systemnotices               # Amazon promo notices
+com.amazon.tv.website_launcher         # promo web pages
+
+# --- tracking what you watch ---
+com.amazon.tv.acr                      # Automatic Content Recognition: fingerprints the screen, HDMI included
+com.amazon.hedwig                      # watch time and engagement
+
+# --- telemetry, logging, crash reporting ---
+com.amazon.tv.fw.metrics
+com.amazon.wirelessmetrics.service
+com.amazon.perfc
+com.amazon.perfcollection
+com.amazon.dp.logger
+com.amazon.logan
+com.amazon.neo.minerva.logcat
+com.amazon.ceviche                     # analytics pipeline, uploads to unagi-*.amazon.com
+com.amazon.connectivitydiag
+com.amazon.tigris
+com.amazon.tv.developer.dataservice
+
+# --- experiments and remote config ---
+com.amazon.ale
+com.amazon.katoch
+com.amazon.device_remote_config_sync_service
+
+# --- update nags (the updater itself is protected, see protected.txt) ---
+com.amazon.tv.forcedotaupdater.v2
+com.amazon.tv.easyupgrade
+
+# --- demos, tutorials and empty stubs ---
+com.amazon.tv.democontent.provider
+com.amazon.storm.lightning.tutorial
+com.amazon.tmm.tutorial
+com.amazon.tv.releasenotes
+com.amazon.dummy.alarmclock
+com.amazon.dummy.calendar
+com.amazon.dummy.contacts
+com.amazon.dummy.gallery
+com.amazon.dummy.music
+com.amazon.dummy.settings
+com.android.traceur                    # system tracing tool
+com.android.nfc                        # no NFC hardware on Fire TV

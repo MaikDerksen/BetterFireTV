@@ -1,0 +1,10 @@
+report/
+*.log
+.DS_Store
+*.dumbtv
+dumbtv.conf
+launcher/build/
+launcher/*.keystore
+video/
+__pycache__/
+*.pyc

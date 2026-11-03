@@ -1,0 +1,40 @@
+# Fire OS 6 version of data/fireos/never-disable.txt: the same list, plus the
+# packages Fire OS 6 needs that the Fire OS 7 list does not name.
+com.amazon.tv.launcher                 # the home screen itself
+com.amazon.firehomestarter             # starts the home screen at boot
+com.amazon.tv.settings.v2              # settings app
+com.amazon.tv.settings.core
+com.amazon.tv.inputpreference.service  # HDMI / input switching
+com.amazon.tv.routing
+com.amazon.tv.livetv                   # tuner and live guide on Fire TV Edition TVs
+com.amazon.franktvinput                # TV input service; HDMI switching breaks without it
+com.amazon.tifobserver                 # on Fire TV Edition TVs (catalog: Insignia AFTEAMR311)
+com.amazon.tv.devicecontrol            # CEC, remote-driven device control
+com.amazon.tv.devicecontrolsettings
+com.amazon.tv.keypolicymanager         # remote keys
+com.amazon.fireinputdevices            # input devices / remote
+com.amazon.autopairservice             # remote pairing
+com.amazon.device.bluetoothpa
+com.amazon.device.blepa
+com.amazon.whisperjoin.middleware.np   # device setup / pairing
+com.amazon.whisperplay.service.install
+com.amazon.tv.oobe                     # first-run setup, needed after a factory reset
+com.amazon.tv.ooberesource
+com.amazon.webview.chromium            # webview, many apps break without it
+com.amazon.webview
+com.amazon.venezia                     # app store, also licenses Appstore apps at launch
+com.amazon.vizzini                     # persistent priv-app; on Fire OS 6 it re-enables
+                                       # itself at boot anyway. Block its domains instead.
+com.amazon.firebat                     # Prime Video on Fire OS 6
+com.amazon.ftv.profilepicker           # profiles, the launcher calls it at boot
+com.amazon.tv.resolutioncycler         # UP+REWIND display-mode recovery
+com.amazon.tv.ime                      # on-screen keyboard
+com.ivona.orchestrator                 # text-to-speech for the VoiceView screen reader
+com.ivona.tts.oem
+com.svox.pico
+com.android.systemui
+com.android.packageinstaller
+com.android.permissioncontroller
+com.android.providers.settings
+com.android.providers.tv
+com.android.bluetooth

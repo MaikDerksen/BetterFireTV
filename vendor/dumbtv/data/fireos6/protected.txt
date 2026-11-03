@@ -1,0 +1,14 @@
+# Packages Fire OS 6.7.1.1 refuses to disable:
+#   Error: java.lang.SecurityException: Cannot disable a protected package
+# lockdown.sh denies them background execution and background data, and the DNS
+# filter kills their endpoints. The first seven were refused on a Fire TV Stick 4K;
+# the last two come from the Fire OS 7 list and were not tried there.
+com.amazon.client.metrics
+com.amazon.device.metrics
+com.amazon.device.crashmanager
+com.amazon.device.logmanager
+com.amazon.ftvads.deeplinking
+com.amazon.device.software.ota
+com.amazon.device.software.ota.override
+com.amazon.device.rdmapplication
+com.amazon.tv.csapp

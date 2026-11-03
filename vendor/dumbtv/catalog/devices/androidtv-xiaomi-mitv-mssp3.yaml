@@ -1,0 +1,60 @@
+id: androidtv-xiaomi-mitv-mssp3
+title: "Xiaomi Mi TV (MiTV-MSSP3, Android TV 9)"
+contributors:
+  - frogu
+platform: androidtv
+status: partial
+tested_on: "PI.4663 release-keys"
+models: []
+adb:
+  port: 5555
+  transport: wifi
+developer_mode: >-
+  Not observed: network ADB was enabled before the session.
+ip_location: "Not established in this session."
+prompts:
+  - name: "Allow USB debugging"
+    blocks_automation: true
+    fix: "Owner accepted the authorization dialog on the TV. Do not retry unauthorized connections in a loop."
+data:
+  packages: data/androidtv/packages.txt
+  protected: data/androidtv/protected.txt
+  never_disable: data/androidtv/never-disable.txt
+  user_apps: data/androidtv/user-apps.txt
+quirks:
+  - "Android 9 SDK 28, build PI.4663 release-keys. No verified generic Android TV removal profile is supplied."
+  - "Installation failed with Requested internal only, but not enough space. Removing owner-selected apps freed enough storage; no cache or unrelated app data was cleared."
+  - >-
+    PatchWall was disabled reversibly for user 0 with
+    adb -s "$ADB_SERIAL" shell pm disable-user --user 0 com.mitv.tvhome.atv.
+    Restore it with adb -s "$ADB_SERIAL" shell pm enable --user 0
+    com.mitv.tvhome.atv. Disabling it also prevents its MiTV+ installation
+    prompt; it does not by itself remap the remote button. No system APK
+    was deleted and no files under /system were changed.
+  - >-
+    On this physical remote the Mi button delivered Android keycode 191;
+    left and down delivered 21 and 20. A separate locally built accessibility
+    helper consumed only key 191 and invoked the global Back action. The
+    owner confirmed that Mi worked as Back with PatchWall disabled. The
+    helper is not included in this repository, and persistence of this later
+    button mapping across reboot was not tested. An ADB-injected keycode
+    192 also launched PatchWall, but was not the physical Mi button code;
+    injected events did not validate the accessibility mapping.
+notes: >-
+  Manual partial session: removed six owner-selected third-party apps,
+  installed checksum-verified repository-pinned dumbtv home and SmartTube
+  stable, and disabled stock YouTube rather than deleting it. Four analytics
+  and feedback packages disabled for user 0. HOME resolved to dumbtv after
+  disabling com.google.android.tvlauncher and the setup handler. After a
+  reboot, HOME selection and all seven disabled package states persisted;
+  Wi-Fi and ADB returned. Android Private DNS using a public resolver with the HaGeZi Normal
+  list blocked pagead2.googlesyndication.com and
+  googleads.g.doubleclick.net while Prime Video resolved. After reboot,
+  the first blocked-domain check and the Prime Video check passed again.
+  Prime Video and other owner-selected streaming apps were retained.
+  SmartTube stable launched successfully before the beta was removed.
+  Playback was not verified. Fire OS all.sh and verify.sh were not run;
+  this entry does not establish a reusable package removal profile.
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

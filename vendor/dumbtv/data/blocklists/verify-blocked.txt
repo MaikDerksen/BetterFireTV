@@ -1,0 +1,8 @@
+# Hosts verify.sh expects to be blocked, whatever the owner chose. All were read
+# out of Fire OS system APKs, so they apply to the whole family. verify.sh also
+# expects api.amazonalexa.com blocked with ALEXA=0 and device-messaging-na.amazon.com
+# with PRIME=0.
+softwareupdates.amazon.com
+arcus-uswest.amazon.com
+unagi-zaz.amazon.com
+unagi-na.amazon.com

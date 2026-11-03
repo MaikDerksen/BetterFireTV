@@ -1,0 +1,92 @@
+id: androidtv-hisense-smarttv-4k-ffm
+title: "Hisense SmartTV 4K FFM (Google TV, Android 11)"
+contributors:
+  - aswinaasokan18-spec
+platform: androidtv
+# Live hardware session with manual ADB; not an end-to-end run of all.sh/verify.sh.
+status: partial
+tested_on: "RTT2.220118.001"
+models: []
+adb:
+  port: 5555
+  transport: wifi
+  first_connection_prompt: >-
+    USB debugging alone opens TCP 5555 on this build; no Wireless debugging
+    pairing code was needed. The first adb connect shows "unauthorized" until
+    the TV's "Allow USB debugging?" dialog is accepted.
+developer_mode: >-
+  Settings > System > About > Android TV OS build > press OK seven times.
+  Then Settings > System > Developer options > USB debugging: ON.
+ip_location: "Settings > Network & Internet > the connected Wi-Fi network"
+prompts:
+  - name: "Allow USB debugging?"
+    when: "first adb connect from a new computer"
+    blocks_automation: true
+    fix: >-
+      Accept on the TV with the remote, with "Always allow from this computer"
+      ticked. Later connects need no prompt, including after a reboot.
+data:
+  packages: data/androidtv/packages.txt
+  protected: data/androidtv/protected.txt
+  never_disable: data/androidtv/never-disable.txt
+  user_apps: data/androidtv/user-apps.txt
+launcher:
+  package: tv.dumbtv.home
+  reason: >-
+    launcherx holds HOME at priority 2 and setupwraith at 1. dumbtv home 1.1
+    (release APK, checksum ok) took HOME after pm disable-user of
+    com.google.android.tungsten.setupwraith and then
+    com.google.android.apps.tv.launcherx. No accessibility Guard and no
+    alarm_manager_constants change were needed.
+  fallback: >-
+    com.android.tv.settings answers HOME at priority -1000, so with both
+    disabled and dumbtv home missing the TV lands in Settings rather than a
+    blank screen.
+  quirk: >-
+    LEANBACK_SETTINGS does not resolve on this build, so the Settings chip
+    falls back to android.settings.SETTINGS, which opens the real TV settings.
+quirks:
+  - >-
+    Google TV "Apps only mode" removes the recommendation rows but keeps a
+    "Sponsored" hero banner at the top of the home screen. The logcat hosts
+    around it are tv.google.com and play.googleapis.com, which the launcher and
+    Play Store also need, so DNS cannot strip the banner. Replacing the launcher
+    is the only fix found.
+  - >-
+    adb exec-out screencap -p produces a corrupt PNG: the vendor screencap
+    prints "Init wrapper sys mutex successful" and "open mma dev failed" on
+    stdout first. Write to /data/local/tmp and adb pull instead.
+  - >-
+    discover.sh flagged 0 of 136 packages. Hisense and MediaTek bloat uses names
+    like com.hisense.service.message (promo notices) and com.hisense.storemode,
+    which its patterns do not match.
+  - >-
+    The UI layer reports 1920x1080 in dumpsys display. Video still plays at 4K.
+    HDR types 1-4 (Dolby Vision, HDR10, HLG, HDR10+) and ARC DD+ with Atmos
+    were unchanged after the session.
+  - >-
+    Private DNS works with no app: settings put global private_dns_specifier
+    <an ad-blocking DoT host> plus private_dns_mode hostname. dumpsys connectivity
+    showed it validated, and ad hosts resolved to 127.0.0.1 after a reboot.
+notes: >-
+  Tested on a real TV on 2026-10-21 with manual ADB. Disabled for user 0, all
+  re-enableable: com.hisense.storemode, fusion.android.tv.demo,
+  com.google.android.feedback, com.google.android.play.games,
+  com.hisense.service.message, com.hisense.alexa, com.google.android.katniss
+  (voice search goes with it), com.google.android.tungsten.setupwraith,
+  com.google.android.apps.tv.launcherx. No PROTECTED or failed disables. The
+  first seven survived two reboots; the launcher swap survived the one after it. Netflix launched
+  from dumbtv home and HOME returned to it. Device codename songshan.
+known_limits:
+  - "One TV and one firmware build; other Hisense Google TV models may differ."
+  - >-
+    all.sh, debloat.sh and verify.sh were not run: debloat.sh refuses non-Amazon
+    hardware, and verify.sh checks Fire OS hosts. An ad-blocking Private DNS
+    resolver was used instead of personalDNSfilter.
+  - >-
+    data/androidtv/packages.txt is still unpopulated. The disables listed in
+    notes are one household's choices, not a removal list for other TVs.
+  - "Firmware OTA services (com.hisense.tv.ota, com.hisense.remoteupgrade) were left enabled."
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

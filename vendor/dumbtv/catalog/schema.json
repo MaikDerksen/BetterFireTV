@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "dumbtv device catalog entry",
+  "type": "object",
+  "required": ["id", "title", "platform", "developer_mode", "ip_location", "data", "verify"],
+  "additionalProperties": true,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]*$" },
+    "title": { "type": "string", "minLength": 3 },
+    "platform": { "enum": ["fireos", "androidtv", "tizen", "webos", "roku", "other"] },
+    "status": { "enum": ["tested", "untested", "partial"] },
+    "tested_on": { "type": "string" },
+    "contributors": { "type": "array", "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9-]*$" } },
+    "notes": { "type": "string" },
+    "models": { "type": "array", "items": { "type": "string" } },
+    "adb": {
+      "type": "object",
+      "properties": {
+        "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "transport": { "enum": ["wifi", "ethernet", "usb", "both"] },
+        "first_connection_prompt": { "type": "string" }
+      }
+    },
+    "developer_mode": { "type": "string", "minLength": 5 },
+    "ip_location": { "type": "string", "minLength": 3 },
+    "prompts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "fix"],
+        "properties": {
+          "name": { "type": "string" },
+          "when": { "type": "string" },
+          "blocks_automation": { "type": "boolean" },
+          "fix": { "type": "string" }
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "required": ["packages", "protected", "never_disable"],
+      "properties": {
+        "packages": { "type": "string" },
+        "protected": { "type": "string" },
+        "never_disable": { "type": "string" },
+        "user_apps": { "type": "string" },
+        "settings": { "type": "string" },
+        "settings_restore": { "type": "string" }
+      }
+    },
+    "launcher": {
+      "type": "object",
+      "properties": {
+        "mechanism": { "enum": ["accessibility_service", "usage_stats_keeper", "set_home_activity", "none"] },
+        "package": { "type": "string" },
+        "reason": { "type": "string" },
+        "fallback": { "type": "string" },
+        "quirk": { "type": "string" }
+      }
+    },
+    "quirks": { "type": "array", "items": { "type": "string" } },
+    "known_limits": { "type": "array", "items": { "type": "string" } },
+    "verify": {
+      "type": "object",
+      "required": ["blocked", "allowed"],
+      "properties": {
+        "blocked": { "type": "string" },
+        "allowed": { "type": "string" }
+      }
+    }
+  }
+}

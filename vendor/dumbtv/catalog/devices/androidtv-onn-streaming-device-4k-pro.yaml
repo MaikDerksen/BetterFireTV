@@ -1,0 +1,67 @@
+id: androidtv-onn-streaming-device-4k-pro
+title: "onn. Streaming Device 4K Pro (Google TV, Android 14)"
+contributors:
+  - OSikorsky
+platform: androidtv
+status: partial
+tested_on: "URO4.260304.011.B1.15051976"
+models:
+  - "onn. Streaming Device 4K pro (jarvis/SNA)"
+adb:
+  port: 5555
+  transport: wifi
+developer_mode: >-
+  Settings > System > About > scroll to Android TV OS Build > press select 7 times. Then Settings > System > Developer options > Wireless debugging: ON, and open 'Pair device with pairing code'. The Google TV remote-pairing code is a separate thing and does not authorize an ADB shell.
+ip_location: "Settings > System > Developer options > Wireless debugging. The 'Pair device with pairing code' dialog shows the pairing endpoint; the main Wireless debugging screen shows a different connect endpoint. 'adb mdns services' lists both."
+prompts:
+  - name: "Wireless debugging pairing code"
+    blocks_automation: true
+    fix: "Pair with adb pair <host>:<pairing-port> using the six-digit code. The pairing port differs from the connect port on the main Wireless debugging screen. Port 5555 accepted connections afterwards without re-pairing."
+  - name: "Play Protect blocks the dumbtv home APK"
+    blocks_automation: true
+    fix: "Play Protect shows 'Unsafe app blocked - this app was built for an older version of Android' with only a 'Got it' button and no install-anyway option, because the launcher targets SDK 28 and this is Android 14. Both 'adb install' and 'pm install' then hang with no output while that dialog waits on screen; logcat shows Finsky VerifyApps verdict 3 launching PlayProtectDialogsActivity. Fix: Play Store > profile > Play Protect > gear > turn off 'Scan apps with Play Protect', install, then turn it back on."
+data:
+  packages: data/androidtv/packages.txt
+  protected: data/androidtv/protected.txt
+  never_disable: data/androidtv/never-disable.txt
+  user_apps: data/androidtv/user-apps.txt
+launcher:
+  mechanism: set_home_activity
+  package: tv.dumbtv.home
+  reason: >-
+    Stock Google TV home replaced. dumbtv home 1.1 installed from the checksum-verified
+    release APK, then com.google.android.tungsten.setupwraith and
+    com.google.android.apps.tv.launcherx disabled for user 0, in that order.
+  fallback: >-
+    pm enable --user 0 for both stock packages hands HOME straight back to Google TV;
+    no reboot needed.
+  quirk: >-
+    cmd package set-home-activity returns Success but is not what decides HOME: launcherx
+    wins on intent-filter priority until it is disabled. Order matters, and setupwraith
+    must go first.
+quirks:
+  - "discover.sh reports 0 candidates out of 139 packages on Google TV. Its CANDIDATE regex matches literal ads/analytics/telemetry/metrics in package names, and Google's equivalents are named adservices.api, ondevicepersonalization, federatedcompute, katniss and tungsten. Build the list by reading pm list packages by hand: a zero result is not a clean device."
+  - "The launcher swap survives a reboot only if setupwraith is disabled BEFORE launcherx. Disabling launcherx first leaves a window where setupwraith still answers HOME, which is the documented system_server crash-loop. With both disabled, cmd package set-home-activity tv.dumbtv.home/.Home returned Success and a cold boot landed on dumbtv home with both still disabled."
+  - "scripts/launcher.sh is the wrong path on Google TV: it runs the Fire OS accessibility Guard takeover, which fights launcherx (HOME intent-filter priority 2) rather than replacing it. Install the checksum-verified APK and disable the two stock HOME packages instead."
+  - "verify.sh exits 1 on a correct Android TV setup. Its 'home' and 'home-speed' checks look for the Fire OS accessibility hook and alarm_manager_constants min_futurity=0, neither of which exists when HOME is taken over the Android TV way. Only the 'packages N disabled' line is meaningful here."
+  - "debloat.sh refuses to run on non-Amazon hardware (is_fireos guard at line 8), so all.sh stops at its third step on any Android TV. The package pass must be applied by hand with pm disable-user."
+  - "dumbtv home requests android.permission.POST_NOTIFICATIONS on Android 14; the manifest caps its other permissions at maxSdkVersion 27. It still declares no INTERNET permission, so the no-network claim holds, but 'zero permissions' is a Fire OS 7/8 statement."
+notes: "Manual ADB session on Android 14. 16 packages disabled for user 0, plus launcherx and setupwraith for the launcher swap (18 total). dumbtv home installed and verified as HOME across a cold boot; Settings and the HOME key both re-checked afterwards. No DNS filtering was configured by choice, so no filter result is claimed."
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt
+known_limits:
+  - "Observed on one onn 4K Pro build (URO4.260304.011.B1); other onn models, remotes and firmware may differ."
+  - >-
+    Not an end-to-end dumbtv run. debloat.sh, lockdown.sh and dnsfilter.sh were never
+    executed; the package pass was applied by hand and verify.sh exits 1 for Fire OS
+    reasons. status is partial for that reason, not because anything misbehaved.
+  - >-
+    No DNS or network-level filtering was configured, so this entry claims no telemetry
+    result. Disabled packages stop their own traffic; GMS was untouched and still
+    reaches Google.
+  - >-
+    The eight active entries now in data/androidtv/packages.txt were verified on this
+    device across two reboots. The commented feature-removal block (katniss, Netflix)
+    is deliberately off by default: each costs the household the remote's mic button or
+    its Netflix hotkey.

@@ -1,0 +1,54 @@
+# Amazon packages debloat.sh disables on Fire OS 6 (Android 7.1, sdk 25).
+# Disabled, never uninstalled: restore.sh turns them back on with `pm enable`.
+#
+# Same rule as data/fireos/packages.txt: only ads, tracking, telemetry,
+# experiments, update nags and dead stubs. Apps people use are in
+# data/fireos/user-apps.txt, Alexa in data/fireos/alexa.txt; both are shared with
+# Fire OS 7 and 8.
+#
+# Checked package by package on a Fire TV Stick 4K (mantis, AFTMM) running
+# Fire OS 6.7.1.1. Entries marked "fire os 6" are not on the Fire OS 7 list.
+
+# --- ads, promos and shopping ---
+com.amazon.hybridadidservice           # advertising ID
+com.amazon.privacypassservice          # ad-token service
+com.amazon.shoptv.client               # shopping on the TV
+com.amazon.shoptv.firetv.client        # second shopping client
+com.amazon.sneakpeek                   # autoplaying promos
+com.amazon.systemnotices               # Amazon promo notices
+com.amazon.tv.website_launcher         # promo web pages
+com.amznfuse.operatorredirection       # fire os 6: telco partner redirection
+
+# --- tracking what you watch ---
+com.amazon.hedwig                      # watch time and engagement
+
+# --- telemetry, logging, crash reporting ---
+com.amazon.tv.fw.metrics
+com.amazon.wirelessmetrics.service
+com.amazon.perfcollection
+com.amazon.dp.logger
+com.amazon.logan
+com.amazon.ceviche                     # analytics pipeline
+com.amazon.connectivitydiag
+com.amazon.tigris
+com.amazon.tv.developer.dataservice
+com.amazon.wifilocker                  # fire os 6: uploads saved Wi-Fi passwords to Amazon
+
+# --- experiments and remote config ---
+com.amazon.ale
+com.amazon.katoch
+
+# --- update nags (the updater itself is protected, see protected.txt) ---
+com.amazon.tv.forcedotaupdater.v2
+com.amazon.tv.easyupgrade
+
+# --- setup helpers for other Amazon devices ---
+com.amazon.whisperjoin.wss.wifiprovisioner  # fire os 6: hands Wi-Fi to new Amazon devices
+com.amazon.tv.ffsprovisioneeclient     # fire os 6: frustration-free setup client
+
+# --- demos, tutorials, test services and empty stubs ---
+com.amazon.storm.lightning.tutorial
+com.amazon.tmm.tutorial
+com.amazon.tv.releasenotes
+com.mediatek.atci.service              # fire os 6: MediaTek AT-command test service
+com.android.carrierconfig              # fire os 6: no SIM

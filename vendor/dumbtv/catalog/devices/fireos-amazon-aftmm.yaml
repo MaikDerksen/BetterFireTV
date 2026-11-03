@@ -1,0 +1,62 @@
+id: fireos-amazon-aftmm
+title: "Amazon Fire TV Stick 4K, 1st gen (AFTMM)"
+contributors:
+  - niz-coder
+platform: fireos
+status: tested
+tested_on: "Fire TV Stick 4K 1st gen (mantis), Fire OS 6.7.1.1: debloat, lockdown, DNS filter and the Keeper launcher; verify.sh exited 0; HOME lands on dumbtv in under 0.3 s with a real remote; boot takes ~45–50 s (BOOT_COMPLETED)"
+models:
+  - AFTMM
+adb:
+  port: 5555
+  transport: wifi
+  first_connection_prompt: "Allow USB debugging? — must be accepted on the TV with the remote"
+developer_mode: >-
+  Settings > My Fire TV > Developer Options > ADB debugging: ON. If Developer Options
+  is missing, Settings > My Fire TV > About > click the device name row 7 times first
+ip_location: Settings > My Fire TV > About > Network
+prompts:
+  - name: USB debugging authorization
+    when: first adb connect from a new machine
+    blocks_automation: true
+    fix: human presses Allow on the TV
+  - name: Debug tool stops on a sleeping remote
+    when: launching apps with monkey to check them
+    blocks_automation: true
+    fix: "monkey --pct-syskeys 0, or am start -n; the BLE remote disconnects while idle"
+  - name: personalDNSfilter start screen
+    when: dnsfilter.sh opens the app once more before the reboot
+    blocks_automation: false
+    fix: "nothing to press; the script sends HOME after 8 s"
+data:
+  packages: data/fireos6/packages.txt
+  protected: data/fireos6/protected.txt
+  never_disable: data/fireos6/never-disable.txt
+  user_apps: data/fireos/user-apps.txt
+  settings: data/fireos/settings.txt
+  settings_restore: data/fireos/settings.restore.txt
+launcher:
+  mechanism: usage_stats_keeper
+  package: tv.dumbtv.home
+  reason: "6.7.1.1 never binds a third-party accessibility service (FireOSFwk A11yAuthorizer, trust=false); the Keeper reads UsageStats and calls moveTaskToFront, which is not an activity launch and skips the 5 s app-switch delay"
+  fallback: "holding HOME opens Fire OS's quick menu; Options > Open Amazon's home screen pauses the Keeper"
+  quirk: "needs appops set tv.dumbtv.home GET_USAGE_STATS allow (install.sh grants it); only reacts to HomeActivity_vNext, so Settings and search are not treated as home"
+quirks:
+  - "no cmd package install-existing: system apps are only disabled, never uninstalled"
+  - "com.amazon.firebat is Prime Video, not an OTA helper"
+  - "com.amazon.vizzini re-enables itself at every boot"
+  - "ps is the old toolbox one: ps -A -o NAME fails with bad pid '-A'"
+  - "no RUN_ANY_IN_BACKGROUND app-op; RUN_IN_BACKGROUND ignore blocks background starts only"
+  - "always_on_vpn_app is dropped at boot; the DNS filter starts from its own boot receiver once it has been opened"
+  - "settings put secure enabled_accessibility_services is silently ignored; content insert stores it, Fire OS still refuses to bind"
+  - "Keeper must match the home activity class, not just com.amazon.tv.launcher: MainSettingsActivity lives in the same package"
+  - "SYSTEM_DNS=1 optionally adds android to androidAppWhiteList so the system can sync NTP past the filter VPN; apps and OTA stay filtered"
+known_limits:
+  - "no bootloader unlock on 6.2.8.0 and later (eFuse), no /system writes (dm-verity)"
+  - "protected packages can only be starved, not disabled"
+  - "Prime Video stops working unless its CDN is left unblocked (PRIME=1 in dumbtv.conf)"
+  - "Keeper declares GET_USAGE_STATS, RECEIVE_BOOT_COMPLETED and REORDER_TASKS with maxSdkVersion=27, so Fire OS 7/8 does not request them"
+  - "without SYSTEM_DNS=1 the clock drifts while the filter VPN is up"
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

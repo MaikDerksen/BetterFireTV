@@ -1,0 +1,34 @@
+id: androidtv-philips-ta6-lt
+title: "Philips Google TV TA6 LT (TPV)"
+contributors:
+  - fabricio00101
+platform: androidtv
+status: partial
+tested_on: "UKNV.260227.001"
+models: []
+adb:
+  port: 5555
+  transport: wifi
+developer_mode: >-
+  Ajustes > Sistema > Acerca de de TV > pulsar 'Numero de compilacion' 7 veces; luego Ajustes > Sistema > Opciones de desarrollador > Depuracion inalambrica ON. Pair with the on-screen code: the pairing port is shown next to the code and is different from the connect port on the main screen.
+ip_location: "Ajustes > Red e Internet > conexion Wi-Fi activa > estado de la conexion"
+prompts:
+  - name: "Play Protect sideload rejection"
+    blocks_automation: true
+    fix: "Finsky answers INSTALL_FAILED_VERIFICATION_FAILURE for unknown signatures. verifier_verify_adb=0 and package_verifier_enable=0 do not reach it, and cmd role has no package-verifier role on this build. Toggle Play Protect off (Play Store > Play Protect), install, toggle it back on."
+  - name: "adb install streamed hang"
+    blocks_automation: true
+    fix: "After a Play Protect rejection, adb install -r hangs with no output. Push the APK to /data/local/tmp and run pm install -r to get an explicit result."
+data:
+  packages: data/androidtv/packages.txt
+  protected: data/androidtv/protected.txt
+  never_disable: data/androidtv/never-disable.txt
+  user_apps: data/androidtv/user-apps.txt
+quirks:
+  - "launcherx declares mPriority=2 on its HOME filter, which beats both android.app.role.HOME and cmd package set-home-activity: HOME keeps landing on Google TV until pm disable-user com.google.android.apps.tv.launcherx. setupwraith re-enables it, so that one must stay disabled too."
+  - "cmd role on this build uses singular verbs (add-role-holder / remove-role-holder), not the plural forms."
+  - "Wireless debugging drops occasionally; adb connect to port 5555 works again without re-pairing."
+notes: "Manual ADB session (repo scripts not run): 4 packages disabled, dumbtv home installed as HOME replacing Google TV launcher; verify.sh targets Fire OS hosts so the full pass was not attempted."
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

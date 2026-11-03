@@ -1,0 +1,132 @@
+# Android TV / Google TV packages to disable. Unlike the Fire OS list these are
+# `pm disable-user`d, not uninstalled: they live in /system on every build seen
+# so far, so uninstalling is not on offer and disabling is fully reversible.
+#
+# Verified on real hardware. Do not copy a list from another TV, and do not
+# uncomment a line you have not watched survive a reboot on your own device.
+# Build candidates with ./scripts/discover.sh — but note its name heuristic
+# finds nothing on Google TV (Google's telemetry is not called "analytics"),
+# so this list was assembled by reading `pm list packages` by hand.
+
+# --- ads, attribution and on-device personalisation ---
+com.android.adservices.api                   # Privacy Sandbox ad APIs (topics, attribution)
+com.android.ondevicepersonalization.services # on-device ad personalisation
+com.android.federatedcompute.services        # federated learning for personalisation
+
+# --- telemetry, feedback and crash reporting ---
+com.google.android.feedback                  # crash/feedback upload
+com.android.tv.feedbackconsent               # TV feedback consent collector
+com.google.android.partnersetup              # OEM partner referrer / attribution setup
+
+# --- promo surfaces ---
+com.google.android.apps.tv.dreamx            # Google TV ambient screensaver: serves promo art
+
+# --- vendor nag (harmless elsewhere: debloat.sh skips absent packages) ---
+com.onn.updatenotification                   # onn/Walmart update nagger
+
+# --- unused features, not telemetry -------------------------------------
+# Verified safe on onn Streaming Device 4K Pro (Android 14), but they are dead
+# weight rather than tracking, so they stay commented: the file's remit is ads
+# and telemetry. Uncomment per household if you want the disk/RAM back.
+# com.android.cts.ctsshim                    # CTS test stub, no runtime purpose
+# com.android.cts.priv.ctsshim               # CTS test stub, no runtime purpose
+# com.android.printspooler                   # printing from a TV
+# com.android.healthconnect.controller       # Health Connect on a TV
+# com.android.health.connect.backuprestore   # Health Connect on a TV
+
+# --- feature removals: ASK FIRST, never unconditional --------------------
+# These work, but each one costs the household something. configure.sh should
+# ask before any of them; never enable them by default.
+# com.google.android.katniss                 # Assistant + voice search. Stops hotword
+#                                            # mic capture, but kills the remote's mic
+#                                            # button and voice search with it.
+# com.netflix.ninja                          # preinstalled Netflix. Remove only if the
+# com.netflix.tokenmanager                   # household does not watch it; also kills
+#                                            # the remote's Netflix hotkey.
+#
+# NOT in this list on purpose:
+#   com.google.android.apps.tv.launcherx     # the home screen. Disabled by hand only as
+#   com.google.android.tungsten.setupwraith  # part of a launcher swap (docs/OTHER-TVS.md),
+#                                            # never as debloat. Both are on
+#                                            # never-disable.txt for that reason.
+#
+# For single builds' documented choices and feature tradeoffs (not executable
+# removal lists), see docs/devices/tcl-g08.md and docs/devices/tcl-g10.md.
+
+# --- Philips-24NA-4K (Skyworth), Android 14, build UKN7.260716.014 ---
+# Verified by hand on that one TV on 2026-10-19: each was uninstalled for user 0
+# and the TV kept working. Commented out on purpose: one household's choices on
+# one build, not a list to apply elsewhere. See
+# catalog/devices/androidtv-philips-24na-4k.yaml.
+#
+# vendor recommendations, shortcuts, manuals, karaoke
+# com.smartdevice.recommendation
+# com.smartdevice.dailyshortcut
+# com.smartdevice.dailymanage
+# com.smartdevice.leanbacklauncher.customizer
+# com.smartdevice.recordactivation
+# com.Smartdevice.emanual
+# com.audiocn.karaoke.global.micmanager
+# com.loostone.tuning
+#
+# feedback, ads, telemetry, personalization
+# com.google.android.feedback
+# com.android.tv.feedbackconsent
+# com.google.android.play.games
+# com.android.adservices.api
+# com.android.federatedcompute.services
+# com.android.ondevicepersonalization.services
+# com.google.android.apps.tv.dreamx
+#
+# voice assistant (removes voice search)
+# com.google.android.katniss
+# com.android.hotwordenrollment.okgoogle
+# com.android.hotwordenrollment.xgoogle
+#
+# firmware updater (no more OTA updates)
+# com.mediatek.tv.systemupdater
+#
+# preinstalled streaming apps this household does not watch. A household
+# choice, not bloat: these belong in user-apps.txt decisions, never here.
+# ar.tvplayer.tv
+# com.ballyscorp.ballylive
+# com.disney.disneyplus
+# com.hulu.livingroomplus
+# com.instagram.airwave
+# com.tubitv
+# com.netflix.ninja
+# com.netflix.tokenmanager
+# com.amazon.amazonvideo.livingroom
+# com.google.android.youtube.tvmusic
+#
+# disabled, not removed, so dumbtv home answers HOME (both are in
+# never-disable.txt; see the catalog entry before copying this)
+# com.google.android.apps.tv.launcherx
+# com.google.android.tungsten.setupwraith
+
+# --- OnePlus TV Y Series (Skyworth), Android 11, build RTO9.231122.002 ---
+# Verified by hand on that one TV on 2026-10-25: each was disabled with
+# pm disable-user and the TV kept working across reboots. Commented out on
+# purpose: one household's choices on one build. See
+# catalog/devices/androidtv-oneplus-y-series.yaml.
+#
+# telemetry and attribution
+# com.google.android.feedback
+# com.google.android.partnersetup
+#
+# promo surfaces: sponsored home rows, OEM promo tiles, screensaver
+# com.google.android.tvrecommendations
+# com.google.android.leanbacklauncher.partnercustomizer
+# com.google.android.backdrop
+#
+# Skyworth store demo mode and e-manual
+# com.smartdevice.common.demonow
+# fusion.android.tv.demo
+# com.Smartdevice.emanual
+#
+# voice assistant (removes voice search and the remote's mic button)
+# com.google.android.katniss
+#
+# disabled so dumbtv home answers HOME (in never-disable.txt; see the
+# catalog entry before copying this)
+# com.google.android.tvlauncher

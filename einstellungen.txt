@@ -1,0 +1,33 @@
+# BetterFireTV – Einstellungen
+# 1 = ja, 0 = nein. Nach einer Änderung einfach Einrichten.cmd noch einmal starten.
+
+# Startbildschirm:
+#   fireframe = Apple-TV-Look: Foto, dünne Uhr, Glas-Dock mit App-Logos
+#   dumbtv    = schlicht: Uhr und App-Reihe (auf Fire OS 8 am meisten getestet)
+#   amazon    = Amazons Startbildschirm behalten
+STARTBILDSCHIRM=fireframe
+
+# Prime Video behalten (0 = seine Server werden gesperrt)
+PRIME_VIDEO=1
+
+# Alexa und Sprachsuche über die Mikrofontaste behalten
+ALEXA=0
+
+# Amazon Music, Amazon Fotos und den Silk-Browser behalten
+AMAZON_APPS=0
+
+# Bildschirm spiegeln (Miracast) behalten. Casting aus Netflix/YouTube-Apps geht so oder so.
+SPIEGELN=0
+
+# DNS-Filter auf dem Stick: blockt Amazon-Telemetrie, Werbeserver und Fire-OS-Updates
+DNS_FILTER=1
+
+# Wohin der Filter alle übrigen Anfragen schickt.
+# AdGuard DNS blockt zusätzlich Werbung und Tracker in Apps. Leer ("") = Router.
+DNS_UPSTREAM="94.140.14.14 94.140.15.15"
+
+# YouTube durch SmartTube ersetzen (werbefrei, ohne Shorts, gleiches Google-Konto)
+SMARTTUBE=1
+
+# Feste IP-Adresse des Sticks, z. B. TV_IP=192.168.178.45 (leer = automatisch suchen)
+TV_IP=

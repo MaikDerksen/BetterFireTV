@@ -1,0 +1,61 @@
+id: fireos-onida-aftgro001
+title: "Onida 43\" Fire TV Edition TV (AFTGRO001)"
+contributors:
+  - humblemuzzu
+platform: fireos
+status: tested
+tested_on: Fire TV Edition television, Fire OS 7.7.1.x
+models: []
+adb:
+  port: 5555
+  transport: wifi
+  first_connection_prompt: "Allow USB debugging? — must be accepted on the TV with the remote"
+developer_mode: >-
+  Fire TV Stick / Cube: Settings > My Fire TV > About > click the device name row 7
+  times, then My Fire TV > Developer Options > ADB debugging: ON.
+  Fire TV Edition televisions (Onida, Toshiba, AmazonBasics) use a different
+  settings app with no "My Fire TV": Settings > Device & Software > About, then
+  click the device name 7 times. On some of those builds the Developer Options
+  row never renders even with development_settings_enabled=1; ADB can still be
+  on (settings global adb_enabled=1) and everything in this repo works.
+ip_location: >-
+  Stick / Cube: Settings > My Fire TV > About > Network. Fire TV Edition:
+  Settings > Network > the connected network > SELECT to customise/details.
+prompts:
+  - name: USB debugging authorization
+    when: first adb connect from a new machine
+    blocks_automation: true
+    fix: human presses Allow on the TV
+  - name: VPN connection request
+    when: installing the DNS filter
+    blocks_automation: true
+    fix: "adb shell appops set dnsfilter.android ACTIVATE_VPN allow before launching; the dialog is phone-sized and ignores the remote"
+  - name: Unable to Detect Your Remote
+    when: a persistent Alexa runtime was disabled
+    blocks_automation: true
+    fix: "keep com.amazon.vizzini enabled; block its domains instead"
+data:
+  packages: data/fireos/packages.txt
+  protected: data/fireos/protected.txt
+  never_disable: data/fireos/never-disable.txt
+  user_apps: data/fireos/user-apps.txt
+  settings: data/fireos/settings.txt
+  settings_restore: data/fireos/settings.restore.txt
+launcher:
+  mechanism: accessibility_service
+  package: tv.dumbtv.home
+  reason: "com.amazon.tv.launcher and com.amazon.firehomestarter are protected; set-home-activity is ignored"
+  fallback: "holding HOME opens Fire OS's quick menu; launcher Options can open Amazon's home"
+  quirk: "HOME key never reaches accessibility key filters; needs alarm_manager_constants min_futurity=0 to skip the 5 s app-switch delay"
+quirks:
+  - "a disabled persistent priv-app can keep running; debloat.sh has a residual-process pass"
+  - "the launcher hook can be cleared, leaving Amazon's home; scripts/launcher.sh restores it"
+  - "after every boot a blank FallbackHome shows for ~15 s"
+  - "the DNS filter must never be force-stopped; reboot instead"
+known_limits:
+  - "no bootloader unlock, no /system writes (dm-verity)"
+  - "protected packages can only be starved, not disabled"
+  - "Prime Video stops working unless its CDN is left unblocked (PRIME=1 in dumbtv.conf)"
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

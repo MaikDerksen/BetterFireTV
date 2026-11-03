@@ -1,0 +1,49 @@
+id: fireos-amazon-aftolcbc82
+title: "Fire TV Edition television (AFTOLCBC82)"
+contributors:
+  - koconnorgit
+  - iotemylabs
+platform: fireos
+status: tested
+tested_on: "RS8153.3202N, then RS8180.3746N after a staged OTA applied on the first reboot; a second set on RS8180.3746N"
+models:
+  - "AFTOLCBC82 (codename ginza; Fire TV Edition television, MediaTek)"
+adb:
+  port: 5555
+  transport: wifi
+developer_mode: >-
+  Enabled by the owner before the session. On this build Developer Options is under Settings > Device & Software > Developer Options, with separate ADB debugging (network) and USB debugging toggles; ADB debugging is the one adb connect needs. The usual Fire OS unlock (About > click the device name 7 times) was not re-verified here.
+ip_location: "Settings > Device & Software > About > Network (the owner supplied the address; path not re-verified)"
+prompts:
+  - name: "USB debugging authorization"
+    blocks_automation: true
+    fix: "human presses Allow on the TV and ticks Always allow. adb devices then shows authorizing and offline for about 30 s before device; keep polling, do not reconnect in a loop"
+  - name: "ADB off after reboot"
+    blocks_automation: true
+    fix: "port 5555 was closed after debloat.sh's reboot although the TV reached its home screen, so reboot_wait timed out. Turning ADB debugging off and on again in Developer Options opened it; turning it on once did not"
+  - name: "Fire TV full-screen keyboard"
+    blocks_automation: true
+    fix: "opens over personalDNSfilter's text fields and hides the dialog. Type with adb shell input text, close it with KEYCODE_BACK; the next tap after typing reopens the field instead of pressing the button, so press BACK and tap again"
+data:
+  packages: data/fireos/packages.txt
+  protected: data/fireos/protected.txt
+  never_disable: data/fireos/never-disable.txt
+  user_apps: data/fireos/user-apps.txt
+quirks:
+  - "After the first reboot network ADB did not come back (port 5555 refused, nothing on mDNS) until the owner toggled ADB debugging off and on in Developer Options; after a later reboot it came back by itself. all.sh stops with 'device did not report boot_completed' when this happens; reconnect and continue with lockdown.sh, dnsfilter.sh and verify.sh"
+  - "personalDNSfilter's screen cannot be navigated with the remote on this TV. Drive it with adb shell input tap at the 1920x1080 override size and check state with uiautomator dump. Edit the first filter entry's URL to the file:// path, untick the other two, then press RESTART: RELOAD FILTER reruns the previously saved config and downloads the default lists again. The log then shows 'Building index for 415 entries'"
+  - "Three packages that debloat.sh reported absent (com.amazon.device_remote_config_sync_service, com.amazon.perfc, com.android.traceur) were present and enabled after the first reboot; pm disable-user --user 0 fixed them and they stayed disabled through a second reboot. 56 packages disabled in total, protected 0"
+  - "Only Prime Video is preinstalled; nothing from user-apps.txt exists on this model. Absent from packages.txt on this build: media.recommendations, tv.fw.metrics, neo.minerva.logcat, tigris, vizzini.ftvcds, firetv.androidskillconnectioncapability, wha.mediabrowserservice, printspooler, bips, nfc"
+  - "On a weak Wi-Fi link (70 percent packet loss) adb shell stalled and every script died with 'not responding'; moving the TV to a better network fixed it. The TV also advertises _adb-tls-connect on mDNS on a random port, which answers offline without pairing and Fire OS has no pairing screen: use port 5555"
+  - "A staged OTA that had been downloaded before the pass was applied on the first reboot (Fire OS 8.1.5.3 RS8153.3202N to 8.1.8.0 RS8180.3746N). Disabled packages, app-ops, the always-on VPN and the DNS filter all survived it and verify.sh still exited 0; softwareupdates.amazon.com is blocked afterwards. The update reset two settings, alexa_wake_word_disabled and voice_disabled, back to 0; settings put secure restored them, the other 13 held"
+  - "Launcher Inputs row: TvContract.buildChannelUriForPassthroughInput resolves to Amazon's Live TV app on this television, which lands in its channel-scan settings when no channels are scanned. Amazon's own home opens inputs through com.amazon.tv.inputpreference.service, which requires a system permission a sideloaded app cannot hold. Launcher 1.2 opens inputs on its own TvView screen instead (Options › Open inputs with › Automatic, the default; PR 33, tested on this television)"
+  - "HOME from an HDMI input takes about 4.5 s with Amazon's Live TV app: the passthrough activity holds the display while it tears down (black screen), then dumbtv home follows within milliseconds. The launcher's own input screen releases the picture about 0.4 s after the key"
+  - "MediaTek input packages (com.mediatek.tis, com.mediatek.dtv.tvinput.atsctuner, com.amazon.mediatek.livetv, com.amazon.tv.settings.mediatek) carry the HDMI, tuner and picture settings; they are on never-disable.txt"
+  - "com.amazon.hedwig also provides a TV input (HedwigTvInputService, a channel source, not HDMI or the tuner); disabling it left every hardware input working"
+  - "com.amazon.device.software.ota restarts within seconds of lockdown.sh's force-stop; only the DNS filter stops updates"
+  - "Wi-Fi reports NOT_METERED, so lockdown.sh's data saver and background-data blacklist have no effect here; the app-op part still applies"
+  - "youtube.sh works on this model"
+notes: "Fire OS 8 television, two sets. A full pass on Fire OS 8.1.5.3 and again after an OTA to 8.1.8.0: debloat, lockdown and the DNS filter through the file:/// list, verify.sh exit 0 before and after a reboot. dumbtv home 1.2 takes HOME 0.3 s after Amazon's home starts, also after a reboot, and opens inputs on its own screen. A second set on 8.1.8.0: debloat (58 disabled), lockdown and youtube.sh, with blocking done by a network resolver using the same host list"
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

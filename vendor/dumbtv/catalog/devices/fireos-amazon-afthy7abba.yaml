@@ -1,0 +1,40 @@
+id: fireos-amazon-afthy7abba
+title: "Fire TV smart TV (AFTHY7ABBA)"
+contributors:
+  - bring-nirachornkul
+platform: fireos
+status: tested
+tested_on: "RS8185.3885N"
+models:
+  - "AFTHY7ABBA (codename ginza; Fire TV smart TV; MediaTek)"
+adb:
+  port: 5555
+  transport: wifi
+developer_mode: >-
+  Enabled by the owner before the session. Settings > Device & Software > Developer Options, with separate ADB debugging (network) and USB debugging toggles; ADB debugging is the one adb connect needs.
+ip_location: "Not read from the TV: found by scanning the LAN for an open port 5555 (Settings > Device & Software > About > Network, as on AFTOLCBC82, not re-verified)"
+prompts:
+  - name: "USB debugging authorization"
+    blocks_automation: true
+    fix: "human presses Allow and ticks Always allow. The first two prompts were accepted after adb connect had already given up, and the key did not stick; a single adb connect left waiting with adb devices polled for about 80 s took the Allow"
+  - name: "ADB off after reboot"
+    blocks_automation: true
+    fix: "port 5555 refused after every reboot (three times) although the TV reached its home screen; turning ADB debugging off and on again in Developer Options opened it each time"
+  - name: "Fire TV full-screen keyboard"
+    blocks_automation: true
+    fix: "opens over personalDNSfilter's URL field; type with adb shell input text, close it with KEYCODE_BACK, then tap the dialog's OK"
+data:
+  packages: data/fireos/packages.txt
+  protected: data/fireos/protected.txt
+  never_disable: data/fireos/never-disable.txt
+  user_apps: data/fireos/user-apps.txt
+quirks:
+  - "No backup service on this build: service check backup answers 'Service backup: not found' and bu logs \"Can't obtain Backup Manager binder\", so dnsfilter.sh's adb restore path cannot work (it returns at once, reported as 'ended before the TV showed its confirmation'). The manual steps worked: first filter row's URL set to file:///storage/emulated/0/Android/media/dnsfilter.android/dumbtv-blocklist.txt, the other two unticked, RESTART; the log showed 'Building index for 416 entries'"
+  - "personalDNSfilter's Edit filter dialog does not appear in uiautomator dump (only the screen behind it); drive it from screenshots. The third row's checkbox is only a 14 px strip at the table's bottom edge and the table does not scroll with input swipe; a tap at that strip unticks it"
+  - "debloat.sh: 47 disabled, protected 0, suspect 0; absent: shoptv.firetv.client, tv.fw.metrics, tigris, android.nfc, vizzini.ftvcds, wha.mediabrowserservice, whad, whasettings. lockdown.sh: rdmapplication absent, the other six protected packages restricted"
+  - "With dumbtv home active, Appstore deep links (amzn://apps/android?p=... and ?s=...) and launching com.amazon.venezia land back on dumbtv home: on Fire OS 8 the Appstore's screens run inside Amazon's launcher. Options > Open Amazon's home screen is the way to install an app"
+  - "A cleanyourtv debloat had disabled 14 overlapping Amazon packages before this pass (ads, ACR, telemetry); verify.sh counted 49 disabled. dumbtv home was built from source with launcher/install.sh --build"
+notes: "Fire OS 8 television on the ginza platform, same as AFTOLCBC82. Full pass by hand in the documented order (debloat, lockdown, dnsfilter with the manual list step, launcher), verify.sh exit 0, and again exit 0 after a reboot"
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

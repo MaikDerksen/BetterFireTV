@@ -1,0 +1,80 @@
+id: androidtv-philips-24na-4k
+title: "Philips 24NA 4K Google TV (Skyworth, Android 14)"
+contributors:
+  - lsukev
+platform: androidtv
+# Full pass done by hand over ADB; verify.sh only checks Fire OS things.
+status: partial
+tested_on: "UKN7.260716.014 (Android 14, sdk 34)"
+models:
+  - "Philips-24NA-4K"
+adb:
+  port: 5555
+  transport: wifi
+developer_mode: >-
+  Standard Google TV path: Settings > System > About > Android TV OS build,
+  press OK seven times, then Settings > System > Developer options and turn on
+  debugging. The exact menu labels on this unit were not recorded.
+ip_location: >-
+  Not recorded on this unit. On Google TV it is normally under
+  Settings > Network & Internet > the connected network.
+prompts:
+  - name: "adb install hangs or fails silently"
+    when: "sideloading the dumbtv home APK"
+    blocks_automation: true
+    fix: >-
+      adb install hung or returned without installing. Push the APK to
+      /data/local/tmp and run pm install -r on it from adb shell; that
+      succeeded and printed an explicit result.
+data:
+  packages: data/androidtv/packages.txt
+  protected: data/androidtv/protected.txt
+  never_disable: data/androidtv/never-disable.txt
+  user_apps: data/androidtv/user-apps.txt
+launcher:
+  mechanism: set_home_activity
+  package: tv.dumbtv.home
+  reason: >-
+    dumbtv home answers HOME once the Google TV launcher and its setup app
+    are disabled.
+  quirk: >-
+    The launcher's Guard only matches com.amazon.tv.launcher, so it does
+    nothing on Google TV. HOME needed com.google.android.apps.tv.launcherx and
+    com.google.android.tungsten.setupwraith disabled with pm disable-user:
+    setupwraith's RecoveryActivity also answers HOME, at priority 1. Both are
+    in data/androidtv/never-disable.txt; disabling them was a deliberate,
+    owner-approved exception on this TV.
+quirks:
+  - >-
+    launcherx and setupwraith both stayed disabled after a reboot on this
+    build.
+  - >-
+    Wi-Fi dropped for about 40 s during the APK install. Reconnect with
+    adb connect on port 5555 and check the install result before retrying.
+  - >-
+    Private DNS set to an ad-blocking DoT resolver validated on this build and
+    blocked doubleclick.
+  - >-
+    Made by Skyworth: the vendor packages are com.smartdevice.* (DailyPlay
+    recommendations, daily shortcuts, e-manual) plus MediaTek's system
+    updater. All of them uninstalled for user 0 without complaint.
+notes: >-
+  Manual ADB session on 2026-10-19 (repo scripts not run for the changes).
+  31 packages changed: 29 uninstalled for user 0 and 2 disabled (launcherx
+  and setupwraith). The removed set included the vendor recommendation and
+  shortcut apps, Google feedback, Play Games, ad services, federated compute,
+  on-device personalization, the Google TV screensaver, katniss and hotword
+  enrollment, the MediaTek system updater, and preinstalled streaming apps
+  the owner does not watch. See the commented block in
+  data/androidtv/packages.txt.
+known_limits:
+  - "Observed on one unit and one build; other Philips/Skyworth models and firmware may differ."
+  - >-
+    all.sh and verify.sh were not run end to end: verify.sh checks Fire OS
+    things, so its pass/fail says nothing about this TV.
+  - >-
+    katniss and the hotword packages were removed. On the TCL G08 that took
+    voice search with it; expect the same here (not checked on this TV).
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

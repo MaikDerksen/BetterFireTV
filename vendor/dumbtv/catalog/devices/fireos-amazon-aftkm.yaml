@@ -1,0 +1,43 @@
+id: fireos-amazon-aftkm
+title: "Amazon Fire TV Stick 4K, 2nd gen (AFTKM)"
+contributors:
+  - gleesonb
+  - humblemuzzu
+platform: fireos
+status: partial
+tested_on: "RS8182.3811N"
+models:
+  - "AFTKM (codename karat)"
+adb:
+  port: 5555
+  transport: wifi
+developer_mode: >-
+  not recorded: ADB was already enabled before this session
+ip_location: "not recorded this session"
+prompts:
+  - name: "USB debugging authorization"
+    blocks_automation: true
+    fix: "human presses Allow on the TV; tick Always allow"
+  - name: "Fire TV full-screen keyboard"
+    blocks_automation: true
+    fix: "opens over any text field and swallows input tap and D-pad; type into the focused field with adb shell input text, then KEYCODE_BACK to close it; taps on other fields land one step behind"
+data:
+  packages: data/fireos/packages.txt
+  protected: data/fireos/protected.txt
+  never_disable: data/fireos/never-disable.txt
+  user_apps: data/fireos/user-apps.txt
+quirks:
+  - "shell gets Permission denied on /sdcard/Android/data/<pkg> (list, read and push, SELinux enforcing), so the DNS filter config and list cannot be pushed; dnsfilter.sh now pushes the list to /sdcard/Android/media/dnsfilter.android/ and prints the one manual step"
+  - "Working DNS filter route: in personalDNSfilter Advanced settings > Configure filter update, point one entry at file:///storage/emulated/0/Android/media/dnsfilter.android/dumbtv-blocklist.txt, untick the rest, reboot. The TV then blocks as on Fire OS 7"
+  - "personalDNSfilter's legacy migration from /sdcard/PersonalDNSFilter runs but sees nothing (scoped storage hides shell-pushed non-media files), so it writes a default config with 1Hosts-light, StevenBlack and HaGeZi Pro active; its first download can hang ('Cannot stop - pending operation') until a reboot"
+  - "adb backup is off (BackupManager is not available for user 0; bmgr activate needs a system permission) and there is no DocumentsUI, so neither adb restore nor the app's own Backup and restore can deliver a config"
+  - "Launcher: Guard's alarm-fired launch is blocked by Android 11 background-activity-start rules (logcat: 'Background activity start ... callingUidHasAnyVisibleWindow: false'), so HOME stays on Amazon's home. verify.sh still reports the hook as bound, because it is; press HOME to check. Fixed in launcher 1.2: the Guard launches only after its cover window has drawn (PR 31), confirmed on an AFTKRT and an AFTOLCBC82, not yet re-tested on this stick"
+  - "No package in packages.txt was refused (protected 0). Absent on this model: tv.fw.metrics, katoch, vizzini.ftvcds, tv.democontent.provider, tv.localgallery, wha.mediabrowserservice, printspooler, bips, nfc; device.rdmapplication from protected.txt; whisperjoin.middleware.np from never-disable.txt"
+  - "Many Amazon apps ship as -stub APKs in /system/system_ext/priv-app with the real app in /data; pm uninstall -k --user 0 drops the /data copy and the stub stays, so restore.sh can still bring them back"
+  - "com.amazon.dummy.settings and com.android.traceur come back enabled after a reboot"
+  - "com.amazon.device.software.ota and .ota.override share one UID"
+  - "EU-region device: avs-alexa-18-eu.amazon.com resolved before it was added to extra-hosts.txt; ktpx-eu-south-2.amazon.com (launcher content) and session-manager-euf.amazonfiretvapp.com (unclassified) are deliberately not blocked"
+notes: "Fire OS 8.1.8.2 (Android 11): debloat, lockdown and the DNS filter work, the filter through one manual step in the app. The HOME takeover did not work with launcher 1.1; launcher 1.2 carries the fix."
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

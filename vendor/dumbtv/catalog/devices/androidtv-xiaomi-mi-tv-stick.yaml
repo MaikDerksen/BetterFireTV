@@ -1,0 +1,102 @@
+id: androidtv-xiaomi-mi-tv-stick
+title: "Xiaomi Mi TV Stick (MiTV-AESP0, Android TV 9)"
+contributors:
+  - pfTheTrial
+platform: androidtv
+# Live hardware session with manual ADB; not an end-to-end run of dumbtv's scripts.
+status: partial
+tested_on: "MiTV-AESP0, Android 9 (SDK 28), build PI.2055 release-keys, security patch 2022-08-05"
+models:
+  - "Mi TV Stick (MiTV-AESP0, 1 GB RAM)"
+adb:
+  port: 5555
+  transport: wifi
+  first_connection_prompt: >-
+    Developer options > USB debugging. With only that toggle on, the stick
+    accepted adb connect on TCP 5555 over Wi-Fi; there is no separate
+    Wireless debugging entry on this Android 9 build. The TV then shows
+    "Allow USB debugging?" for the computer's key.
+developer_mode: >-
+  Settings > Device Preferences > About > Build, press OK seven times.
+  Back in Device Preferences, Developer options > USB debugging.
+ip_location: Settings > Network & Internet > select the connected Wi-Fi network
+prompts:
+  - name: "Allow USB debugging?"
+    when: "first adb connect from a new computer"
+    blocks_automation: true
+    fix: >-
+      Tick "Always allow from this computer" and press OK on the remote.
+      Until then adb devices lists the stick as unauthorized.
+data:
+  packages: data/androidtv/packages.txt
+  protected: data/androidtv/protected.txt
+  never_disable: data/androidtv/never-disable.txt
+  user_apps: data/androidtv/user-apps.txt
+launcher:
+  mechanism: set_home_activity
+  package: tv.dumbtv.home
+  reason: >-
+    dumbtv home 1.1 release APK (checksum-verified) installed and launched
+    fine. HOME only moved to it after the stock launcher was disabled:
+    pm disable-user --user 0 com.google.android.tvlauncher, then
+    cmd package set-home-activity tv.dumbtv.home/.Home.
+  fallback: >-
+    com.android.tv.settings/.system.FallbackHome (priority -1000) stays as
+    the HOME of last resort, so a broken launcher does not leave a black
+    screen. Undo: pm enable com.google.android.tvlauncher.
+  quirk: >-
+    After the first reboot com.google.android.tvlauncher was enabled again
+    and back on screen. The Google setup wizard
+    (com.google.android.tungsten.setupwraith) runs a BootCompletedReceiver at
+    boot and is the likely cause. Shell cannot disable that receiver alone
+    (SecurityException: Shell cannot change component state). Disabling the
+    whole setupwraith package and disabling tvlauncher again held: setupwraith
+    came back enabled by itself, but tvlauncher stayed disabled and dumbtv
+    home stayed HOME across two further reboots. The exact trigger is not
+    proven.
+quirks:
+  - >-
+    Ships tv.alphonso.alphonso_eula (Alphonso automatic content recognition)
+    as a system package. pm disable-user --user 0 works on it.
+  - >-
+    1 GB RAM. With stock Google TV home about 180 MB was available; the
+    stock launcher alone used about 108 MB PSS. After the debloat below,
+    dumbtv home and SmartTube in place of the YouTube app, about 370-380 MB
+    was available after boot (MemAvailable).
+  - >-
+    Disabled with pm disable-user --user 0 without side effects seen in this
+    session: com.miui.tv.analytics, tv.alphonso.alphonso_eula,
+    com.google.android.tvrecommendations, com.google.android.feedback,
+    com.google.android.tv.bugreportsender, com.android.printspooler,
+    com.mitv.milinkservice, com.mitv.tvhome.michannel,
+    com.xiaomi.mitv.updateservice, com.mitv.download.service,
+    com.xiaomi.android.tvsetup.partnercustomizer, com.google.android.katniss
+    (removes voice search), com.google.android.youtube.tv (replaced by
+    SmartTube). All stayed disabled across reboots.
+  - >-
+    The adb TCP session goes offline after the stick idles. adb disconnect
+    and adb connect again reconnects without a new authorization prompt.
+  - >-
+    Android 9 Private DNS works from adb even though the Android TV settings
+    UI does not show it: settings put global private_dns_mode hostname and
+    settings put global private_dns_specifier <DoT host>. dumpsys
+    connectivity then reported UsePrivateDns true and the network validated.
+    No VPN app or extra RAM needed.
+notes: >-
+  Tested on a real stick on 2026-10-19 with manual ADB from Windows (Git Bash).
+  Xiaomi has not shipped a security patch for this model since 2022-08-05.
+  SmartTube 32.56 (dumbtv's pinned APK) installed and loaded its home feed.
+  This is a device report, not a package-list contribution; the list in
+  quirks is what this one household chose, not a recommendation for others.
+known_limits:
+  - "Observed on one MiTV-AESP0 stick and build; other Mi TV Stick variants (e.g. 4K) run a different OS version."
+  - >-
+    dumbtv's all.sh, debloat.sh and verify.sh were not run. The DNS filter
+    from dnsfilter.sh was not installed; Private DNS was used instead.
+  - >-
+    data/androidtv/packages.txt remains unpopulated. Package profiles need a
+    separate contribution.
+  - "Video playback after the Private DNS change was not confirmed in this session."
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

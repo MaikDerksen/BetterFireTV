@@ -1,0 +1,40 @@
+# Apps and features people use. dumbtv never removes these on its own: an app is
+# removed only when the owner names it (REMOVE_EXTRA in dumbtv.conf, or
+# configure.sh --remove). This list exists so agents and configure.sh know them by
+# name; data/apps.txt has readable names for the common ones.
+#
+# Named apps are handled by debloat.sh like this: Amazon's own (system) apps are
+# disabled, which restore.sh undoes; apps installed from a store are uninstalled
+# and come back from the store.
+
+# --- Amazon apps ---
+com.amazon.minitv.android.app          # Amazon miniTV, ad-supported streaming
+com.amazon.imdb.tv.android.app         # Freevee
+com.imdb.livingroom.firetv             # IMDb
+com.amazon.bueller.music               # Amazon Music
+com.amazon.bueller.photos              # Amazon Photos
+com.amazon.gamehub                     # Games
+com.amazon.tahoe                       # Amazon Kids (FreeTime): kid profiles and their PIN screens
+com.amazon.spiderpork                  # Amazon Luna cloud gaming (a stub that fetches the app)
+com.amazon.cloud9                      # Silk browser
+com.amazon.tv.localgallery             # photos and videos from USB storage
+com.amazon.tv.support                  # Help
+com.amazon.ftv.screensaver             # Amazon's screensaver: without it nothing covers a still picture
+com.amazon.tv.notificationcenter       # notifications
+com.amazon.uxnotification
+com.amazon.csm.htmlruntime             # web runtime some Amazon screens use
+com.amazon.tv.ottssocompanionapp       # sign in with your TV provider
+com.amazon.mvpdauth                    # Fire OS 6: TV provider sign-in
+com.android.printspooler               # printing
+com.android.bips                       # printing
+
+# --- regional streaming apps that ship preinstalled on some TVs ---
+in.startv.hotstar                      # JioHotstar
+com.zee5.amazon                        # Zee5
+com.jio.media.stb.ondemand             # JioCinema
+com.onemainstream.sonyliv.android      # SonyLIV
+com.discoveryplus.tv.fire              # Discovery+
+com.aajtak.firetv                      # Aaj Tak
+tv.twitch.android.viewer               # Twitch
+com.creative.fastscreen.tv             # FastScreen
+com.mxtech.videoplayer.television      # MX Player

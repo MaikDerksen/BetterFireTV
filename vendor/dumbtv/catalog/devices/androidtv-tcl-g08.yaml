@@ -1,0 +1,98 @@
+id: androidtv-tcl-g08
+title: "TCL Smart TV Pro G08 (Google TV, Android 14)"
+contributors:
+  - maam00
+platform: androidtv
+# Live hardware session; not an end-to-end run of dumbtv's scripts.
+status: partial
+tested_on: "tcl9618-user 14 UTT2.250416.001 AU14 release-keys"
+models:
+  - "Smart TV Pro (G08_4K_US/G08)"
+adb:
+  port: 5555
+  transport: wifi
+  first_connection_prompt: >-
+    Pair device with pairing code in Wireless debugging. The TV displays a
+    six-digit Wi-Fi pairing code and a pairing address/port. Google TV remote
+    pairing is separate and does not authorize an ADB shell.
+developer_mode: >-
+  Settings > System > About > Android TV OS Build (below Kernel Version) >
+  press OK seven times. Return to System > Developer options > Debugging.
+  USB debugging was enabled, but did not initially open a network connection;
+  enable Wireless debugging and open Pair device with pairing code.
+ip_location: >-
+  Settings > System > Developer options > Wireless debugging. Its pairing
+  dialog shows IP address & Port for adb pair; use the connection endpoint
+  from Wireless debugging or ADB mDNS discovery for adb connect.
+prompts:
+  - name: "Wi-Fi pairing code"
+    when: "authorizing the first ADB connection from the computer"
+    blocks_automation: true
+    fix: >-
+      Open Pair device with pairing code on the TV and use its current code
+      and pairing port with adb pair. Then connect to the connection endpoint.
+      The earlier Google TV remote-control pairing code cannot be reused here.
+  - name: "Accessibility service enabled but not bound"
+    when: "enabling a sideloaded companion app's remote-button service"
+    blocks_automation: true
+    fix: >-
+      TclAppBoot logged "callee doesn't have OP_AUTO_START permission".
+      Grant the app's AUTO_START app-op with adb -s "$ADB_SERIAL" shell cmd
+      appops set <package> AUTO_START allow, then rebind its accessibility
+      service. This session toggled the service entry in
+      enabled_accessibility_services; preserve other services when doing so.
+      Confirm the service appears under Bound services in dumpsys accessibility.
+      The same service was confirmed bound after a TV reboot.
+data:
+  packages: data/androidtv/packages.txt
+  protected: data/androidtv/protected.txt
+  never_disable: data/androidtv/never-disable.txt
+  user_apps: data/androidtv/user-apps.txt
+launcher:
+  mechanism: none
+  package: com.google.android.apps.tv.launcherx
+  reason: "Stock Google TV home was retained; dumbtv home was not installed."
+quirks:
+  - >-
+    ro.product.model contains spaces (Smart TV Pro); adb devices -l uses
+    model:Smart_TV_Pro. A literal underscore-only getprop check rejected the
+    correct TV until the spaces were normalized. Always select the device
+    explicitly when more than one Android device is connected.
+  - >-
+    Wireless TLS debugging was unavailable after overnight standby. The
+    already-authorized computer could reconnect on TCP port 5555 without
+    another prompt. That port was not available at initial setup; do not
+    assume that an unpaired TV accepts a first connection there.
+  - >-
+    The tested remote delivered keycode 4056 for 123, 190 for YouTube and
+    4184 for TCL TV to an accessibility key filter. The companion remapped
+    123 to its side panel and YouTube to YouTube TV while passing the mic key
+    through to Google's assistant. These codes are observations for this
+    remote and firmware, not a mapping for every TCL remote.
+  - >-
+    Turning off microphone access silenced the hotword capture but left
+    katniss:interactor running. Disabling com.google.android.katniss stopped
+    the capture but also removed the remote mic/voice-search path. It was
+    re-enabled and the Google Assistant role restored for the final setup.
+notes: >-
+  Tested on a real TV on 2026-10-17 and 2026-10-18 using manual ADB and local
+  companion tools. The saved change log contains 21 successful disabled-user
+  results; packages were disabled for user 0 rather than uninstalled.
+  The owner confirmed the setup worked. The companion's 123 panel and a
+  Netflix deep link were confirmed on the TV. The final setup retained
+  Google TV home, Gemini and TCL Intelligent picture processing.
+  Kernel: 5.15.180-android14-11. This is a device report, not a package-list
+  contribution or a claim that the complete dumbtv pass was tested.
+known_limits:
+  - "Observed on one G08 build; other TCL models, remotes and firmware may differ."
+  - >-
+    dumbtv's all.sh and verify.sh were not run. No dumbtv launcher or DNS
+    filter result is claimed. The verify paths below are the catalog's
+    existing Fire OS host lists, not a verified Google/TCL DNS policy.
+  - >-
+    data/androidtv/packages.txt remains unpopulated. This entry does not
+    enable debloat.sh on Android TV or recommend the local removal list
+    for other households. Package profiles need a separate contribution.
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

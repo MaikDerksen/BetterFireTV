@@ -1,0 +1,36 @@
+id: fireos-insignia-afthy7abba
+title: "Insignia 50\" F50 Fire TV (NS-50F502NA26, AFTHY7ABBA)"
+platform: fireos
+status: partial
+tested_on: "RS8185.3885N"
+models:
+  - "Insignia NS-50F502NA26 F50 series"
+  - "AFTHY7ABBA (ginza)"
+adb:
+  port: 5555
+  transport: wifi
+developer_mode: >-
+  Settings > My Fire TV > About > click the device name 7 times, then My Fire TV > Developer Options > ADB debugging: ON
+ip_location: "Settings > Network > the connected Wi-Fi network > details"
+prompts:
+  - name: "USB debugging authorization"
+    blocks_automation: true
+    fix: "human presses Allow on the TV and ticks Always allow. On the first connect the dialog did not appear; adb disconnect, adb kill-server, then adb connect brought it up"
+  - name: "Network adb not listening after a reboot"
+    blocks_automation: true
+    fix: "adb_enabled stays 1 and the Developer Options switch still shows ON, but port 5555 refuses. Toggle ADB debugging off and on with the remote, then adb connect. Do it within ~2 minutes of the home screen or reboot_wait dies with 'device did not report boot_completed'"
+data:
+  packages: data/fireos/packages.txt
+  protected: data/fireos/protected.txt
+  never_disable: data/fireos/never-disable.txt
+  user_apps: data/fireos/user-apps.txt
+quirks:
+  - "No Android backup service: 'service list' has no backup and bmgr says 'Could not access the Backup Manager'. dnsfilter.sh's adb restore therefore always ends with 'adb restore ended before the TV showed its confirmation' and drops to the manual steps; the 'Restore my data?' dialog never appears, so retrying with a person at the TV does not help"
+  - "The manual DNS-filter fallback did not work: the pushed /sdcard/Android/media/dnsfilter.android/dumbtv-blocklist.txt ends up owned by another app uid (group media_rw) with mode 0600, and chmod over adb does not change it. With the dumbtv entry set Active and every default list unticked, RELOAD FILTER still reported 383955 entries (314928 unique) every time: it silently kept the app's previously downloaded default lists (1Hosts Lite, StevenBlack, HageziPro). Left as DNSFILTER=0: always_on_vpn_app deleted and dnsfilter.android disabled"
+  - "Why network adb was gone after debloat.sh's reboot: logcat at boot shows AdbDebuggingManager 'Not connected to any wireless network. Not enabling adbwifi.' about two minutes before Wi-Fi came up (slow first boot, load average ~19). adbd started listening on tcp:5555 only when ADB debugging was toggled. Nothing points at a disabled package"
+  - "pm list packages -3 is empty: Amazon Luna (com.amazon.spiderpork) and Silk (com.amazon.cloud9) live in /data/app but count as system apps, so naming them in --remove disables them instead of uninstalling them (restore.sh brings them back)"
+  - "No stock YouTube (com.amazon.firetv.youtube absent); youtube.sh only installs SmartTube. com.amazon.firebat, com.amazon.franktvinput, com.amazon.tv.livetv and com.amazon.vizzini are not on any list and stayed enabled"
+notes: "Fire OS 8 (RS8185.3885N, Android 11, SDK 30) Insignia F50 TV. Debloat: 50 disabled (incl. Alexa and three named apps), 0 protected, 8 absent, 0 suspect; lockdown starved 6 protected packages; dumbtv home 1.5 and SmartTube 32.56 installed. The DNS filter could not be set up (no backup service, manual fallback could not read the list), so the pass ran with DNSFILTER=0; verify.sh reports all checks passed with the dns and filter checks skipped. A reboot with dumbtv home in place was not tested"
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

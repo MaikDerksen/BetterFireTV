@@ -1,0 +1,58 @@
+id: fireos-insignia-afteamr311
+title: "Insignia Fire TV Edition TV (AFTEAMR311)"
+contributors:
+  - gtalusan
+platform: fireos
+status: tested
+tested_on: "NS6711"
+models:
+  - "AFTEAMR311 (codename blanche, Insignia Fire TV Edition)"
+adb:
+  port: 5555
+  transport: wifi
+  first_connection_prompt: "Allow USB debugging? — accept on the TV with the remote and tick Always allow"
+developer_mode: >-
+  not recorded: ADB was already enabled before this session
+ip_location: "not recorded this session"
+prompts:
+  - name: "USB debugging authorization"
+    when: "first adb connect from a new machine"
+    blocks_automation: true
+    fix: "human presses Allow on the TV and ticks Always allow; a missed dialog is re-triggered by adb disconnect + adb connect"
+  - name: "ADB flaps offline while idle or on an external input"
+    when: "the TV is left alone, or an HDMI input is being displayed"
+    blocks_automation: true
+    fix: "retry adb connect (recovers in seconds to minutes); worst case power-cycle. Capture logcat with logcat -f /data/local/tmp/x.log before doing anything whose evidence you need, because the file survives the power-cycle"
+data:
+  packages: data/fireos6/packages.txt
+  protected: data/fireos6/protected.txt
+  never_disable: data/fireos6/never-disable.txt
+  user_apps: data/fireos/user-apps.txt
+  settings: data/fireos/settings.txt
+  settings_restore: data/fireos/settings.restore.txt
+launcher:
+  mechanism: usage_stats_keeper
+  package: tv.dumbtv.home
+  reason: "Fire OS 6.7 refuses third-party accessibility services (A11yAuthorizer); the Keeper reads UsageStats and calls moveTaskToFront, which is not an activity launch and skips the 5 s app-switch delay"
+  fallback: "holding HOME opens Fire OS's quick menu; Options > Open Amazon's home screen pauses the Keeper"
+  quirk: "needs appops set tv.dumbtv.home GET_USAGE_STATS allow (install.sh grants it); only reacts to HomeActivity_vNext; after some reboots the Keeper process is alive but its service is not foreground — launcher.sh -y re-arms it"
+quirks:
+  - "Fire TV Edition TV, not a stick: everything including ADB runs over the wired link (eth0); the schema has no ethernet value, so adb.transport stays wifi"
+  - "Has real HDMI inputs and an ATSC tuner. Disabling com.amazon.franktvinput and com.amazon.tifobserver (both in data/fireos6/packages.txt) breaks HDMI input switching and the dumbtv home Inputs row — they were re-enabled, and belong in never-disable.txt for TV Edition sets; com.amazon.tv.livetv too (this set has a tuner, ADTVInputService/HW16, unlike the stick the lists were written for)"
+  - "Debloat: 62 disabled, 9 absent, 0 protected, 0 suspect. Absent: com.amazon.mvpdauth, com.amznfuse.operatorredirection, com.amazon.spiderpork, com.amazon.whad, com.amazon.whasettings, com.amazon.csm.htmlruntime, com.amazon.whisperjoin.wss.wifiprovisioner, com.mediatek.atci.service, com.android.carrierconfig"
+  - "No YouTube or VLC preinstalled; no package from user-apps.txt present (the list is moot here)"
+  - "com.amazon.metrics.api and com.amazon.client.metrics.api are telemetry packages not in data/fireos6/packages.txt (their siblings are); they are packages.txt candidates for every Fire OS 6 device"
+  - "On networks whose firewall DNATs port 53 (every DNS query redirected to a local resolver), the pushed fallbackDNS (#router + the gateway IP) fails: replies arrive from the redirect target, which the app discards as unsolicited. Fix: point fallbackDNS at the real resolver (fallbackDNS = [<resolver>]::53::UDP in the pushed dnsfilter.conf)"
+  - "First boot after installing the filter: the VPN establishment races and dies with 'network interface add tun0 … Device or resource busy'. A reboot, or opening personalDNSfilter once, brings it up cleanly"
+  - "After a plain reboot the VPN can come up and later drop (tun0 state DOWN while the app process is alive); opening personalDNSfilter once re-establishes it and it stays — verify.sh's own advice is the recovery"
+  - "Input switching from a third-party launcher (solved): the standard passthrough VIEW URI has no resolver on this Fire OS, and Amazon's tvinput://tunenow URI is gated by com.amazon.tv.permission.TUNE_INPUT (signature|amazon, never granted to sideloaded apps). Inputs render through the launcher's built-in TvView screen (the public API path; verified on this device) — set switch=home in home.conf. The session surface attach drives the native mux (daemon logs 'SystemControl: [CPQControl]:source input = N'); video arrives ~500 ms after the session is set up"
+  - "Boot takeover: Fire OS's boot flow re-launches Amazon's home repeatedly for the first couple of minutes (the system starts the HOME activity over and over); each re-launch fires the foreground event the Keeper's event path watches, so the upstream Keeper takes over on its own around the two-minute mark — no boot window is needed. set-home-activity prints Success and still resolves to Amazon's launcher. One trap: moving an EMPTY task (one whose activity was just finished by the HOME-press task reset) makes Fire OS relaunch the dead activity — the Keeper never moves empty tasks"
+known_limits:
+  - "no cmd package install-existing: system apps are only disabled, never uninstalled"
+  - "protected packages can only be starved, not disabled"
+  - "without SYSTEM_DNS=1 the clock drifts while the filter VPN is up"
+  - "adb dies whenever the TV suspends the Fire OS side (idle or displaying an external HDMI input); ping still answers, TCP does not"
+notes: "Fire OS 6.7.1.1 (Android 7.1.2) on an Insignia Fire TV Edition set: debloat, lockdown, DNS filter (after pointing fallbackDNS at the network's real resolver), the Keeper launcher and input switching all verified — verify.sh exits 0. Inputs render in dumbtv home via the built-in TvView screen; the boot takeover happens on its own around the two-minute mark through the Keeper's event path. Diagnostics (logcat tag and the optional reboot-surviving log) are documented in launcher/README.md."
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

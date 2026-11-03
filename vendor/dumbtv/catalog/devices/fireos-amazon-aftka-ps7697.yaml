@@ -1,0 +1,34 @@
+id: fireos-amazon-aftka-ps7697
+title: "Amazon Fire TV Stick 4K Max, 1st gen (AFTKA), Fire OS 7.6.9.7"
+contributors:
+  - dchuk
+platform: fireos
+status: partial
+tested_on: "PS7697.4800N"
+models:
+  - "AFTKA (Fire TV Stick 4K Max, 1st gen)"
+adb:
+  port: 5555
+  transport: wifi
+developer_mode: >-
+  not recorded: ADB was already enabled before this session
+ip_location: "not recorded this session"
+prompts:
+  - name: "USB debugging authorization"
+    blocks_automation: true
+    fix: "human presses Allow on the TV; tick Always allow from this computer"
+data:
+  packages: data/fireos/packages.txt
+  protected: data/fireos/protected.txt
+  never_disable: data/fireos/never-disable.txt
+  user_apps: data/fireos/user-apps.txt
+quirks:
+  - "DNS filter: after dnsfilter.sh's adb reboot the ACTIVATE_VPN app-op was back to default (ignore), always_on_vpn_app was null and the app was stopped=true notLaunched=true, so no tun0 and nothing blocked. Same symptom as issue #15 on a Sony Google TV. Fix that worked: appops set dnsfilter.android ACTIVATE_VPN allow, settings put secure always_on_vpn_app dnsfilter.android, am start -n dnsfilter.android/.DNSProxyActivity, then reboot; the VPN came up by itself on the next boot"
+  - "com.android.nfc ships disabled by the system (dumpsys: enabled=2), so pm disable-user fails with 'Shell cannot change component state for com.android.nfc/null to 3' and debloat.sh reports SUSPECT. It is off already and the rest of the pass is unaffected; #24 reports it as already disabled"
+  - "No package in packages.txt was refused as protected. Absent on this model: media.recommendations, perfc, neo.minerva.logcat, device_remote_config_sync_service, alexadirectivebrokerservice, firetv.androidskillconnectioncapability, rtcsessioncontroller, tv.democontent.provider, tv.localgallery"
+  - "com.amazon.tv.developer.dataservice keeps running after its disable; the residual-process pass turns its ops off and blocks its data"
+  - "Launcher: the accessibility HOME takeover works as on Fire OS 7.7; HOME from inside Netflix lands on dumbtv home"
+notes: "Fire OS 7.6.9.7 (Android 9) on a Fire TV Stick 4K Max: debloat, lockdown and the launcher work unchanged. The DNS filter needed the manual restart in quirks (issue #15); after that verify.sh passed every check."
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

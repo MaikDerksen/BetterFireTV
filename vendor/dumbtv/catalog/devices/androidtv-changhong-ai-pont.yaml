@@ -1,0 +1,42 @@
+id: androidtv-changhong-ai-pont
+title: "Changhong AI PONT (Google TV, Android 14)"
+contributors:
+  - frogu
+platform: androidtv
+status: partial
+tested_on: "UKNV.260603.001"
+models: []
+adb:
+  port: 5555
+  transport: wifi
+developer_mode: >-
+  Not observed: ADB was already authorized when this session started.
+ip_location: "Observed in the Wireless debugging screen; navigation path not established."
+prompts:
+  - name: "Play Protect older Android target warning"
+    blocks_automation: true
+    fix: "Expand More details and choose Install anyway for the checksum-verified dumbtv home release. Play Protect was not disabled."
+data:
+  packages: data/androidtv/packages.txt
+  protected: data/androidtv/protected.txt
+  never_disable: data/androidtv/never-disable.txt
+  user_apps: data/androidtv/user-apps.txt
+quirks:
+  - "Android 14 SDK 34. Fire OS scripts are inappropriate. No verified debloat profile exists for this model."
+notes: >-
+  Partial manual session: five advertising, personalization and feedback
+  packages disabled for user 0; dumbtv home and SmartTube installed from
+  repository-pinned checksum-verified APKs. Google TV launcher and setup
+  handler disabled after dumbtv home launched. After an owner-performed
+  reboot, HOME still resolved to dumbtv and the disabled states persisted.
+  Wi-Fi settings were lost during the session; the owner reconnected Wi-Fi,
+  restoring ADB. The cause was not established. Android Private DNS with
+  a public resolver serving the HaGeZi Normal list was validated by Android;
+  pagead2.googlesyndication.com and googleads.g.doubleclick.net resolved to
+  loopback while YouTube and Prime Video domains resolved publicly.
+  SmartTube launched successfully, then stock YouTube was disabled for user 0,
+  not uninstalled. Playback was not verified. Fire OS all.sh and verify.sh
+  were not run; this is not an end-to-end tested package profile.
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

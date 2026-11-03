@@ -1,0 +1,19 @@
+# Pre-change values, applied by restore.sh. Taken from a stock Fire OS 7 build.
+# On a device that already had different values, snapshot them first:
+#   adb shell settings list secure > secure.before.txt
+secure amz_limit_ad_tracking 0
+secure limit_ad_tracking 0
+secure non_amz_limit_ad_tracking 0
+secure advertisingIdApp:interestBasedAds:value 1
+secure USAGE_METRICS_UPLOAD_ENABLED 1
+secure usage_metrics_marketing_enabled 1
+secure settingsApp:appUsageData:value 1
+secure settingsApp:deviceUsageData:value 1
+secure alexa_wake_word_disabled 0
+secure voice_disabled 0
+global heads_up_notifications_enabled 1
+global com.amazon.tv.settings.featured_item_video_enabled 1
+global com.amazon.tv.settings.featured_item_video_volume 1.0
+global window_animation_scale 1.0
+global transition_animation_scale 1.0
+global animator_duration_scale 1.0

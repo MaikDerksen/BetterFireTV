@@ -1,0 +1,39 @@
+# Packages that must never be disabled or uninstalled, whatever else looks
+# tempting. debloat.sh refuses to touch anything listed here. Each line is
+# either the thing that draws the screen, switches inputs, keeps the remote
+# paired, or is needed after a factory reset.
+com.amazon.tv.launcher                 # the home screen itself
+com.amazon.firehomestarter             # starts the home screen at boot
+com.amazon.tv.settings.v2              # settings app
+com.amazon.tv.settings.core
+com.amazon.tv.inputpreference.service  # HDMI / input switching
+com.amazon.tv.routing
+com.amazon.tv.devicecontrol            # CEC, remote-driven device control
+com.amazon.tv.devicecontrolsettings
+com.amazon.tv.keypolicymanager         # remote keys
+com.amazon.tv.livetv                   # tuner
+com.amazon.franktvinput                # TV input service
+com.amazon.tifobserver
+com.mediatek.tis                       # MediaTek HDMI and analog inputs (Fire TV Edition TVs)
+com.mediatek.dtv.tvinput.atsctuner
+com.amazon.mediatek.livetv
+com.amazon.tv.settings.mediatek
+com.amazon.fireinputdevices            # input devices / remote
+com.amazon.autopairservice             # remote pairing
+com.amazon.device.bluetoothpa
+com.amazon.device.blepa
+com.amazon.whisperjoin.middleware.np   # device setup / pairing
+com.amazon.whisperplay.service.install
+com.amazon.tv.oobe                     # first-run setup, needed after a factory reset
+com.amazon.tv.ooberesource
+com.amazon.webview.chromium            # webview, many apps break without it
+com.amazon.venezia                     # app store
+com.amazon.firebat                     # Prime Video (Fire OS 6 and 7), not an OTA helper
+com.amazon.device.messaging            # disabling it hung a 2025 Fire TV at the boot animation
+                                       # (issue #57). Prime Video needs it to start.
+com.amazon.vizzini                     # do not disable: it is a persistent priv-app that
+                                       # then draws an undismissable "Unable to Detect Your
+                                       # Remote" window over the TV. Block its domains instead.
+com.android.systemui
+com.android.packageinstaller
+com.android.permissioncontroller

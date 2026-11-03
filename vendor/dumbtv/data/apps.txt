@@ -1,0 +1,28 @@
+# App name -> package, for the questions in configure.sh and for agents mapping
+# what a person said to a package id. Not exhaustive: check the device with
+#   adb shell pm list packages -3
+# Format:  <display name>    <package>
+Netflix                     com.netflix.ninja
+Prime Video                 com.amazon.avod
+Prime Video (Fire TV)       com.amazon.firebat
+YouTube                     com.amazon.firetv.youtube
+YouTube Kids                com.amazon.firetv.youtube.kids
+VLC                         org.videolan.vlc
+Plex                        com.plexapp.android
+Jellyfin                    org.jellyfin.androidtv
+Kodi                        org.xbmc.kodi
+Disney+                     com.disney.disneyplus
+Spotify                     com.spotify.tv.android
+Apple TV                    com.apple.atve.amazon.appletv
+MX Player                   com.mxtech.videoplayer.television
+JioHotstar                  in.startv.hotstar
+Zee5                        com.zee5.amazon
+JioCinema                   com.jio.media.stb.ondemand
+SonyLIV                     com.onemainstream.sonyliv.android
+Discovery+                  com.discoveryplus.tv.fire
+Aaj Tak                     com.aajtak.firetv
+Twitch                      tv.twitch.android.viewer
+FastScreen                  com.creative.fastscreen.tv
+Appstore                    com.amazon.venezia
+Amazon Kids                 com.amazon.tahoe
+Amazon Luna                 com.amazon.spiderpork

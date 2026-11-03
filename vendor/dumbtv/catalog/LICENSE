@@ -1,0 +1,16 @@
+The device catalog in this directory (catalog/devices/*.yaml and the file
+catalog/schema.json) is licensed under Creative Commons Attribution-ShareAlike
+4.0 International (CC BY-SA 4.0).
+
+    https://creativecommons.org/licenses/by-sa/4.0/
+
+You are free to share and adapt it, including commercially, as long as you give
+credit and keep derived works under the same licence.
+
+The scripts and documentation elsewhere in this repository are MIT licensed; see
+../LICENSE.
+
+Contributors: by opening a pull request that adds or edits a file in this
+directory, you agree to publish it under these terms. Do not submit anything that
+identifies a household — no IP addresses, MAC addresses, serial numbers, Wi-Fi
+names or account emails.

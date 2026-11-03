@@ -1,0 +1,34 @@
+# Copy to catalog/devices/<platform>-<brand>-<model>.yaml and fill in; id must match
+# the file name. ./scripts/contribute.sh writes this for you.
+id: androidtv-brand-model
+title: "Brand Model (Google TV, Android 14)"
+contributors:
+  - your-github-name
+platform: androidtv
+status: untested
+tested_on: ""
+models:
+  - Example model 1
+adb:
+  port: 5555
+  transport: wifi
+  first_connection_prompt: "Developer options > USB/network debugging; accept the prompt"
+developer_mode: Settings > System > About > click Build 7 times
+ip_location: Settings > Network > Status
+prompts: []
+data:
+  packages: data/androidtv/packages.txt
+  protected: data/androidtv/protected.txt
+  never_disable: data/androidtv/never-disable.txt
+  user_apps: data/androidtv/user-apps.txt
+launcher:
+  mechanism: set_home_activity
+  package: tv.dumbtv.home
+  reason: "Android TV accepts cmd package set-home-activity"
+  fallback: ""
+  quirk: ""
+quirks: []
+known_limits: []
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

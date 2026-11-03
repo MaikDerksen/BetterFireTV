@@ -1,0 +1,31 @@
+id: fireos-xiaomi-aftanna0
+title: "Xiaomi L55M7-FVEU Fire TV (AFTANNA0)"
+contributors:
+  - jmcerrejon
+platform: fireos
+status: tested
+tested_on: "PS7706.5107N"
+models:
+  - "Xiaomi L55M7-FVEU"
+adb:
+  port: 5555
+  transport: wifi
+developer_mode: >-
+  Settings > My Fire TV > About > press OK on the device name 7 times, then Developer Options > ADB debugging
+ip_location: "Settings > My Fire TV > About > Network"
+prompts:
+  - name: "Allow USB debugging?"
+    blocks_automation: true
+    fix: "Press Allow and tick Always allow on the TV"
+data:
+  packages: data/fireos/packages.txt
+  protected: data/fireos/protected.txt
+  never_disable: data/fireos/never-disable.txt
+  user_apps: data/fireos/user-apps.txt
+quirks:
+  - "Router did not answer DNS; the filter needed DNS_UPSTREAM set to public resolvers or every app lost internet"
+  - "launcher.sh needed a second run before the HOME guard bound"
+notes: "android 9, kernel 4.9.118++"
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

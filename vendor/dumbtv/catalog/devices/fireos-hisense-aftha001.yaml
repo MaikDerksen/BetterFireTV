@@ -1,0 +1,95 @@
+id: fireos-hisense-aftha001
+title: "Hisense 58U6HF Fire TV (AFTHA001)"
+contributors:
+  - murilaiooo
+platform: fireos
+status: partial
+tested_on: "Fire OS 7.7.1.7, PS7717.5741N (Android 9, SDK 28)"
+models:
+  - "Hisense 58U6HF (Amazon model AFTHA001, codename hailey)"
+adb:
+  port: 5555
+  transport: wifi
+  first_connection_prompt: "Allow USB debugging? The owner accepted it with the TV remote; ADB then reported device."
+developer_mode: >-
+  ADB debugging was already enabled before this session. Its exact activation
+  path was not independently verified on this TV.
+ip_location: >-
+  Not independently verified: the owner supplied the TV's network address.
+prompts:
+  - name: "ADB authorization on first connection"
+    when: "connecting the Windows PC to this television over ADB for the first time"
+    blocks_automation: true
+    fix: "accept the debugging authorization on the physical TV; confirm adb devices shows device, not unauthorized"
+  - name: "PC cannot reach TV over LAN while the TV is on a separate Wi-Fi band/SSID"
+    when: "initial ADB connect timed out, before changing the access-point isolation settings"
+    blocks_automation: true
+    fix: >-
+      On this setup, the TV became reachable after client isolation was disabled
+      and access from the wireless network to wired ports was allowed. Both
+      endpoints were on the same IPv4 subnet; the bands alone were not proven
+      to be the cause. Check isolation and routing before changing ADB.
+data:
+  packages: data/fireos/packages.txt
+  protected: data/fireos/protected.txt
+  never_disable: data/fireos/never-disable.txt
+  user_apps: data/fireos/user-apps.txt
+  settings: data/fireos/settings.txt
+  settings_restore: data/fireos/settings.restore.txt
+launcher:
+  mechanism: accessibility_service
+  package: tv.dumbtv.home
+  reason: >-
+    Fire OS retains com.amazon.tv.launcher as the HOME resolver. A local
+    build based on dumbtv launcher 1.1 uses the accessibility Guard and
+    alarm_manager_constants min_futurity=0 for HOME redirection.
+  fallback: >-
+    The original Amazon launcher remains installed and is still the HOME
+    resolver; the local installation includes an independently rehearsed
+    rollback restoring the exact original accessibility and alarm settings.
+  quirk: >-
+    A visit to Amazon Home pauses upstream Guard takeover. On PS7717.5741N,
+    pressing physical HOME again while Amazon Home is already displayed emits
+    am_new_intent but no new accessibility window event; the upstream Guard
+    does not see that key. A separate local experimental build detects this
+    event through a temporary events-log reader, which requires an explicit
+    ADB grant of READ_LOGS. The workaround is NOT part of upstream dumbtv and
+    has a significant permission/privacy tradeoff.
+quirks:
+  - >-
+    Fire TV Edition television with real HDMI inputs. Passing the HDMI tile's
+    passthrough URI to the default Amazon app did not provide the desired
+    input switching. A local TvView-based HDMI activity using the public TV
+    Input Framework displayed HDMI 1; video/audio, Back and physical HOME
+    were confirmed. This independently supports the approach in PR #33.
+  - >-
+    Physical remote verification on the final local build: pressing HOME
+    while Amazon Home was open returned to dumbtv; HDMI 1 -> HOME and
+    another app -> HOME also returned to dumbtv. This is NOT a claim that
+    unmodified upstream launcher 1.1 passes those scenarios.
+  - >-
+    ADB package snapshot found 273 packages, 2 already disabled. No Amazon
+    system package was disabled, uninstalled or modified during the launcher
+    experiment.
+known_limits:
+  - >-
+    Launcher-only, locally patched APK, not an upstream release: the full
+    debloat, lockdown, DNS filter and upstream verify.sh were not run.
+  - >-
+    The experimental Amazon-visit HOME workaround requires ADB-granted
+    android.permission.READ_LOGS; do not enable that broad permission by
+    default without a security/design review.
+  - >-
+    HDCP/DRM from external sources, CEC/ARC, suspend/resume, other HDMI
+    ports and parental PIN were not fully certified.
+  - >-
+    ADB snapshots do not include full system firmware, private application
+    data or DRM material; rollback is not a byte-for-byte system image.
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt
+notes: >-
+  Partial hardware report for Hisense 58U6HF (AFTHA001). Physical HOME and
+  HDMI checks passed using a private build based on upstream 1.1; package
+  removal and DNS behavior were deliberately not tested. No device IDs,
+  network details or logs are attached.

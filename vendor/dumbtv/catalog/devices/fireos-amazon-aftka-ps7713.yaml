@@ -1,0 +1,37 @@
+id: fireos-amazon-aftka-ps7713
+title: "Amazon Fire TV Stick 4K Max, 1st gen (AFTKA), Fire OS 7.7.1.3"
+contributors:
+  - harupong
+  - Elv1sh
+platform: fireos
+status: tested
+tested_on: "PS7713.5443N"
+models:
+  - "AFTKA (Fire TV Stick 4K Max)"
+adb:
+  port: 5555
+  transport: wifi
+developer_mode: >-
+  Settings > My Fire TV > About > select the device name 7 times, then
+  Developer Options > ADB Debugging; adb over Wi-Fi to the stick's IP
+ip_location: "Settings > My Fire TV > About > Network"
+prompts:
+  - name: "USB debugging authorization"
+    blocks_automation: true
+    fix: "human presses Allow on the TV"
+data:
+  packages: data/fireos/packages.txt
+  protected: data/fireos/protected.txt
+  never_disable: data/fireos/never-disable.txt
+  user_apps: data/fireos/user-apps.txt
+quirks:
+  - "com.android.nfc reports SUSPECT (Shell cannot change component state): it ships disabled (enabled=2), so nothing changes and it is harmless"
+  - "Keeping Alexa takes more than KEEP_APPS: debloat.sh still writes secure voice_disabled=1 and alexa_wake_word_disabled=1, which had to be set back to 0 by hand"
+  - "KEEP_APPS only accepts packages that are in the removal lists; listing every installed app to be safe stops debloat.sh with 'matches nothing in the removal lists'"
+  - "No package in packages.txt was refused (protected 0). Absent on this model: media.recommendations, neo.minerva.logcat, device_remote_config_sync_service, tv.democontent.provider, tv.localgallery"
+  - "This build has no 'cmd package install-existing', so system apps are only disabled, never uninstalled"
+  - "lockdown.sh turns Data Saver on for the whole TV, which can also restrict background data for apps the user keeps"
+notes: "Two sticks on Fire OS 7 build PS7713.5443N. One ran the full pass and verify.sh exited 0. The other ran debloat, lockdown and the dumbtv home takeover with DNSFILTER=0 by choice, Alexa and Silk kept via KEEP_APPS; verify.sh exited 0 there too."
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

@@ -1,0 +1,21 @@
+# Alexa's voice and device servers. dnsfilter.sh adds these to the filter only
+# with ALEXA=0; with Alexa kept, blocking them would stop the voice remote.
+api.amazonalexa.com
+api.eu.amazonalexa.com
+api.fe.amazonalexa.com
+avs-alexa-14-na.amazon.com
+# seen on a Fire OS 7.7.1.7 TV (issue #58)
+avs-alexa-19-na.amazon.com
+# seen on an EU-region Fire TV Stick (issue #8)
+avs-alexa-18-eu.amazon.com
+devices.amazonalexa.com
+idc-service-ga.amazon.com
+idc-service-be.amazon.com
+idc-service-ga-fe.amazon.com
+idc-service-ga-eu.amazon.com
+mlis.amazon.com
+rafs.amazon.com
+rafs-eu.amazon.com
+rafs-fe.amazon.com
+# whole family: the filter blocks every subdomain
+alexa-personality.amazon.dev

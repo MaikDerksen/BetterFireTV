@@ -1,0 +1,15 @@
+# Android TV: never disable these. Unverified guesses are exactly what makes a TV
+# unusable, so this list is deliberately small and conservative.
+com.google.android.tvlauncher            # home screen (Android TV)
+com.google.android.apps.tv.launcherx     # home screen (Google TV)
+com.android.tv.settings                  # settings
+com.android.settings
+com.android.systemui
+com.android.packageinstaller
+com.android.permissioncontroller
+com.android.tv                           # live TV / input framework
+com.google.android.tv.remote.service     # remote pairing
+com.google.android.tungsten.setupwraith  # first-run setup
+com.mediatek.wwtv.tvcenter               # HDMI inputs and tuner screen (MediaTek TVs: OnePlus Y Series)
+com.mediatek.tvinput                     # TV input services behind it
+com.mediatek.tv.service                  # MediaTek TV middleware

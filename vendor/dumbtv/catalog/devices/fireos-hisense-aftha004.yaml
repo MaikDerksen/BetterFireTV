@@ -1,0 +1,29 @@
+id: fireos-hisense-aftha004
+title: "Hisense 55QD65NF Fire TV Edition (AFTHA004)"
+contributors:
+  - stedrow
+platform: fireos
+status: tested
+tested_on: "Fire OS 7.7.1.7, PS7717.5741N (Android 9, SDK 28)"
+models:
+  - "Hisense 55QD65NF Fire TV Edition"
+adb:
+  port: 5555
+  transport: wifi
+developer_mode: >-
+  Settings > My Fire TV > About > click the device name 7 times, then My Fire TV > Developer Options > ADB debugging: ON
+ip_location: "Settings > About > Network"
+prompts: []
+data:
+  packages: data/fireos/packages.txt
+  protected: data/fireos/protected.txt
+  never_disable: data/fireos/never-disable.txt
+  user_apps: data/fireos/user-apps.txt
+quirks:
+  - "Another launcher that redirects HOME through a plain accessibility hook showed Amazon's home for about 5 s first, the Android 9 app-switch delay; dumbtv home's alarm launch is the way around it."
+  - "Reports as AFTHA004 (codename hazel), not AFTHA001 like the 58U6HF entry; same Fire OS 7.7.1.7 PS7717/5741."
+  - "5 third-party apps were present and untouched. com.android.nfc was already disabled by the system."
+notes: "debloat.sh (39 packages), lockdown.sh, dnsfilter.sh and launcher.sh ran with PRIME=0 ALEXA=1 LAUNCHER=1; verify.sh exited 0 with all checks passing. HOME on the physical remote returned to dumbtv home."
+verify:
+  blocked: data/blocklists/verify-blocked.txt
+  allowed: data/blocklists/verify-allowed.txt

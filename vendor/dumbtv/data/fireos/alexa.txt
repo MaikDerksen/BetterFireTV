@@ -1,0 +1,24 @@
+# Alexa and the voice remote. Kept by default: disabling these stops the remote's
+# voice button. debloat.sh disables them only with ALEXA=0 in dumbtv.conf, which
+# also turns off the wake word and voice settings and blocks Alexa's servers in the
+# DNS filter (data/blocklists/alexa-hosts.txt).
+#
+# One list for Fire OS 6, 7 and 8: a package that is not on the TV is skipped.
+# com.amazon.vizzini is not here on purpose; see never-disable.txt.
+com.amazon.aca                         # the app that owns the microphone
+com.amazon.alexa.datastore.app
+com.amazon.alexadirectivebrokerservice
+com.amazon.alexamediaplayer.runtime.ftv
+com.amazon.alexa.externalmediaplayer.fireos
+com.amazon.tv.alexaalerts
+com.amazon.tv.alexanotifications
+com.amazon.vizzini.ftvcds
+com.amazon.firetv.androidskillconnectioncapability
+com.amazon.audiohome
+com.amazon.rtcsessioncontroller        # Alexa calling
+com.amazon.smarthomemapviewapp         # "Alexa Smart Home" dashboard
+com.amazon.spotify.mediabrowserservice # lets Alexa play Spotify
+com.amazon.wha.mediabrowserservice     # Alexa multi-room audio
+com.amazon.aria                        # Alexa visual cards
+com.amazon.whad                        # Alexa multi-room audio (Fire OS 6, and the Fire TV Cube on 7)
+com.amazon.whasettings                 # Fire OS 6, and the Fire TV Cube on 7

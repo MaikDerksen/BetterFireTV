@@ -1,0 +1,17 @@
+# Gerätedaten, Protokolle, Downloads und eigene Fotos bleiben lokal
+backups/
+logs/
+tools/
+downloads/
+hintergruende/
+# Startbildschirm: Build-Zwischenstand und privater Signierschlüssel
+home/out/
+home/signing/
+# Was dumbtv zur Laufzeit anlegt
+vendor/dumbtv/launcher/build/
+vendor/dumbtv/dumbtv.conf
+vendor/dumbtv/report/
+# IDE und Hilfsdateien
+.idea/
+*.iml
+_dev.sha

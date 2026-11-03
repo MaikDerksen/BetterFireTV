@@ -1,0 +1,4 @@
+# Applied by debloat.sh only with ALEXA=0. Fire OS resets both to 0 at boot,
+# which is harmless once com.amazon.aca is disabled.
+secure alexa_wake_word_disabled 1
+secure voice_disabled 1
